@@ -1,0 +1,36 @@
+/* CSS is not a programming language. It's not a markup language either. CSS is a style sheet language */
+
+  html {
+    font-size: 12px; /* px means "pixels": the base font size is now 10 pixels high */
+    font-family: Arial; /* this should be the rest of the output you got from Google Fonts */
+    background-color: #0dc441;
+  }
+
+  h1 {
+    font-size: 60px;
+    text-align: center;
+    margin: 0;
+    padding: 20px 0;
+    color: #00539f;
+    text-shadow: 3px 3px 1px black;
+  }
+
+  img {
+    display: block;
+    margin: 0 auto;
+  }
+
+  p,
+  li {
+    font-size: 16px;
+    line-height: 2;
+    letter-spacing: 1px;
+  }
+
+  body {
+    width: 600px;
+    margin: 0 auto;
+    background-color: #ff9500;
+    padding: 0 20px 20px 20px;
+    border: 5px solid black;
+  }
