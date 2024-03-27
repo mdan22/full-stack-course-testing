@@ -17,7 +17,20 @@ const object3 = {
         first: 'Dan',
         last: 'Abranov',
     },
-    grades: [2, 3, 5, 3],
+    grades: [
+        {
+            name: 'Fundamentals of React',
+            exercises: 10
+          },
+          {
+            name: 'Using props to pass data',
+            exercises: 7
+          },
+          {
+            name: 'State of a component',
+            exercises: 14
+          }
+    ],
     department: 'Stanford University',
 }
 
@@ -30,3 +43,8 @@ object1.address = 'Helsinki'
 object1['secret number'] = 12341    // this has to be done in using brackets: secret number is not a valid property name bc of space character
 
 console.log(object1)
+
+console.log("--------------------")
+
+console.log(object3.grades[0].name)
+
