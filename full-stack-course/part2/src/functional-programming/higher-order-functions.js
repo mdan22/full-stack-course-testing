@@ -18,12 +18,10 @@ function triple(x) {
 
 // not all programming languages can do this:
 // create an anonymous function and assign it to a value:
-function triple(x) {
-    return x * 3
-}
+
+var waffle = triple
 
 // functions can be assigned to variables or even passed into other functions
-var waffle = triple
 
 waffle(30) // = 90
 
@@ -75,4 +73,15 @@ var isDog = function(animal) {
 
 var dogs = animals.filter(isDog)
 
+// Define the reject function
+Array.prototype.reject = function(callback) {
+    return this.filter(function(item) {
+      return !callback(item);
+    });
+};
+
 var otherAnimals = animals.reject(isDog)
+
+console.log(animals);
+console.log(dogs);
+console.log(otherAnimals);
