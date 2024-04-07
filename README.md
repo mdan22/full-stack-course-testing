@@ -1,6 +1,8 @@
-# FS-Course Testing Space
+# full-stack-testing-space
 
-This is a Repo for testing, coding, debugging stuff related to the [full-stack-course](https://github.com/mdan22/full-stack-course).
+This is a Repo for testing, coding, debugging stuff related to the full stack course that I'm doing right now.
+- find my submission repo [here](https://github.com/mdan22/full-stack-course)
+- find the full-stack-course [here](https://fullstackopen.com/en/)
 
 ## Technologies
 <ul>
