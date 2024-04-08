@@ -1,28 +1,28 @@
-const App = (props) => {
-  const { notes } = props
+import Note from "./components/Note"
 
-  // We could have made the error message on our
-  // console disappear by using the array indexes
-  // as keys. The indexes can be retrieved by
-  // passing a second parameter to the callback
-  // function of the map method:
+// Note that the key attribute must now be defined for the Note
+// components, and not for the li tags like before.
+
+// const Note = ({note}) => {
+//   return (
+//     <li>{note.content}</li>
+//   )
+// }
+
+// we can put notes directly as parameter for app instead of props
+const App = ({notes}) => {
+  // const { notes } = props
   
   return (
     <div>
       <h1>Notes</h1>
       <ul>
-        {notes.map((note, i) =>
-        <li key={i}>
-          {note.content}
-        </li>
+        {notes.map(note =>
+        <Note key={note.id} note={note}/>
       )}
       </ul>
     </div>
   )
 }
-
-// This is, however, not recommended and can
-// create undesired problems even if it seems
-// to be working just fine.
 
 export default App
