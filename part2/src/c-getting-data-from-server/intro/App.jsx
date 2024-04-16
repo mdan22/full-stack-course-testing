@@ -6,9 +6,8 @@ import Note from "./components/Note"
 
 const App = (props) => {
   const [notes, setNotes] = useState(props.notes)
-  const [newNote, setNewNote] = useState(
-    'a new note...'
-  )
+  const [newNote, setNewNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
 
   const addNote = (event) => {
     event.preventDefault()
@@ -48,15 +47,32 @@ const App = (props) => {
     setNewNote(event.target.value)
   }
 
+  // Filtering is done with the help of the array
+  // filter method:
+  const notesToShow = showAll
+    ? notes
+    : notes.filter(note => note.important)
+    // operator '=== true' is redundant here
+
   return (
     <div>
       <h1>Notes</h1>
+      {/* add functionality that enables users */}
+      {/* to toggle the showAll state from ui*/}
+      <div>
+        <button onClick={() => setShowAll(!showAll)}>
+          show {showAll? 'important' : 'all'}
+        </button>
+      </div>
       <ul>
-        {
-          notes.map(
-            note => <Note key={note.id} note={note}/>
-          )
-        }
+        {notesToShow.map(note =>
+          <Note key={note.id} note={note} />
+        )}
+      </ul>
+      <ul>
+        {notes.map(note =>
+        <Note key={note.id} note={note}/>
+      )}
       </ul>
       <form onSubmit={addNote}>
         <input
