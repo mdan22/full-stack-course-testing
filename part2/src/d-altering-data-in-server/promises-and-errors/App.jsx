@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import axios from "axios"
 import Note from "./components/Note"
 import noteService from "../../services/notes"
 
@@ -9,10 +8,10 @@ const App = () => {
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
 
-  // we use noteService.getAll instead of axios.get(...)
+  // we use noteService.getAll() instead of axios.get(...)
   useEffect(() => {
     noteService
-      .getAll
+      .getAll()
       .then(initialNotes => {
         setNotes(initialNotes)
       })
@@ -20,7 +19,7 @@ const App = () => {
 
   console.log('render', notes.length, 'notes')
 
-  // we use noteService.create instead of axios.post(...)
+  // we use noteService.create(...) instead of axios.post(...)
   const addNote = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target);
@@ -46,7 +45,7 @@ const App = () => {
     ? notes
     : notes.filter(note => note.important)
 
-  // we use noteService.update instead of axios.put(...)
+  // we use noteService.update(...) instead of axios.put(...)
   const toggleImportanceOf = (id) => {
     console.log(`importance of ${id} is being toggled`) // template string syntax
     const url = `http://localhost:3001/notes/${id}`
@@ -57,6 +56,14 @@ const App = () => {
     noteService.update(id, changedNote)
       .then(returnedNotes => {
       setNotes(notes.map(n => n.id !== id ? n : returnedNotes))
+    })
+    .catch(error => {
+      alert(
+        `the note '${note.content}' was already deleted from server`
+      )
+      // filter returns a new array comprising only the items from the
+      // list for which the function "n.id !== id" returns true for
+      setNotes(notes.filter(n => n.id !== id))
     })
   }
 

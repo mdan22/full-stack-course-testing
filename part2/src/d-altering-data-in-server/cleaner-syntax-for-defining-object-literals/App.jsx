@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import axios from "axios"
 import Note from "./components/Note"
 import noteService from "../../services/notes"
 
@@ -12,7 +11,7 @@ const App = () => {
   // we use noteService.getAll instead of axios.get(...)
   useEffect(() => {
     noteService
-      .getAll
+      .getAll()
       .then(initialNotes => {
         setNotes(initialNotes)
       })
