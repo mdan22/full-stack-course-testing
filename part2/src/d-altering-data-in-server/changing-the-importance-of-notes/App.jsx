@@ -10,22 +10,18 @@ const App = () => {
 
   const hook = () => {
     console.log('effect');
-    axios
+    axios 
       .get('http://localhost:3001/notes')
       .then(response => {
         console.log('promise fulfilled');
         setNotes(response.data);
       })
   }
-  
-  // useEffect takes two parameters:
-  // 1) a function - the effect itself
-  // 2) an empty array - meaning the effect is
+
   useEffect((hook), [])
 
   console.log('render', notes.length, 'notes')
 
-  // function for creating new notes:
   const addNote = (event) => {
     event.preventDefault()
     console.log('button clicked', event.target);
@@ -39,33 +35,31 @@ const App = () => {
       .post('http://localhost:3001/notes', noteObject)
       .then(response => {
         console.log(response)
+        setNotes(notes.concat(response.data))
+        setNewNote('') 
       })
-
-    setNotes(notes.concat(response.data))
-    setNewNote('') 
   }
-
-  // Since we assigned a piece of the App
-  // component's state as the value attribute of
-  // the input element, the App component now
-  // controls the behavior of the input element.
-
-  // To enable editing of the input element, we
-  // have to register an event handler that
-  // synchronizes the changes made to the input
-  // with the component's state:
 
   const handleNoteChange = (event) => {
     console.log(event.target.value)
     setNewNote(event.target.value)
   }
 
-  // Filtering is done with the help of the array
-  // filter method:
   const notesToShow = showAll
     ? notes
     : notes.filter(note => note.important)
-    // operator '=== true' is redundant here
+
+  const toggleImportanceOf = (id) => {
+    console.log(`importance of ${id} is being toggled`) // template string syntax
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(note => note.id === id)
+    const changedNote = { ...note, important: !note.important} // object spread syntax
+    // we create an extra copy (shallow copy) of note bc
+    // we must never mutate state directly in React.
+    axios.put(url, changedNote).then(response => {
+      setNotes(notes.map(n => n.id !== id ? n : response.data))
+    })
+  }
 
   return (
     <div>
@@ -79,7 +73,7 @@ const App = () => {
       </div>
       <ul>
         {notesToShow.map(note =>
-        <Note key={note.id} note={note}/>
+        <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)}/>
       )}
       </ul>
       <form onSubmit={addNote}>
