@@ -15,9 +15,5 @@ const update = (id, newObject) => {
   const request = axios.put(`${baseUrl}/${id}`, newObject)
   return request.then(response => response.data)
 }
-
-export default { 
-  getAll: getAll, 
-  create: create, 
-  update: update 
-}
+// shorter notation using new feature of ES6 JavaScript:
+export default { getAll, create, update }
