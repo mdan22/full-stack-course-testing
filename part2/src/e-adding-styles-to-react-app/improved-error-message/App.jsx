@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react"
 import Note from "./components/Note"
+import Notification from "./components/Notification"
 import noteService from "../../services/notes"
 
 const App = () => {
   const [notes, setNotes] = useState([])
-  // the newNote state reflects the current value of the input
-  const [newNote, setNewNote] = useState('')
+  const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('some error happened...')
 
   // we use noteService.getAll() instead of axios.get(...)
   useEffect(() => {
@@ -45,21 +46,21 @@ const App = () => {
     ? notes
     : notes.filter(note => note.important)
 
-  // we use noteService.update(...) instead of axios.put(...)
   const toggleImportanceOf = (id) => {
     console.log(`importance of ${id} is being toggled`) // template string syntax
     const note = notes.find(note => note.id === id)
     const changedNote = { ...note, important: !note.important} // object spread syntax
-    // we create an extra copy (shallow copy) of note bc
-    // we must never mutate state directly in React.
     noteService.update(id, changedNote)
       .then(returnedNotes => {
       setNotes(notes.map(n => n.id !== id ? n : returnedNotes))
     })
     .catch(error => {
-      alert(
-        `the note '${note.content}' was already deleted from server`
+      setErrorMessage(
+        `Note '${note.content}' was already removed from server`
       )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
       // filter returns a new array comprising only the items from the
       // list for which the function "n.id !== id" returns true for
       setNotes(notes.filter(n => n.id !== id))
@@ -69,8 +70,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
-      {/* add functionality that enables users */}
-      {/* to toggle the showAll state from ui*/}
+      <Notification message={errorMessage} />
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll? 'important' : 'all'}
