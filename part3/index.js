@@ -52,6 +52,18 @@ app.get('/api/notes', (request, response) => {
 // It's worth noting that JSON is a string and not a
 // JavaScript object like the value assigned to notes.
 
+app.get('/api/notes/:id', (request, response) => {
+  const id = Number(request.params.id) // fix: changed id from string to number:
+  console.log(id)
+  const note = notes.find(note => note.id === id)
+  if(note) { // if note is not undefined
+    response.json(note)
+  }
+  else {
+    response.status(404).end()
+  }
+})
+
 const PORT = 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
