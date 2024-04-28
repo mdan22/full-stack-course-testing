@@ -54,7 +54,6 @@ app.get('/api/notes', (request, response) => {
 
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id) // fix: changed id from string to number:
-  console.log(id)
   const note = notes.find(note => note.id === id)
   if(note) { // if note is not undefined
     response.json(note)
@@ -62,6 +61,12 @@ app.get('/api/notes/:id', (request, response) => {
   else {
     response.status(404).end()
   }
+})
+
+app.delete('/api/notes/:id', (request, response) => {
+  const id = Number(request.params.id)
+  const note = notes.filter(note => note.id !== id)
+  response.status(204).end()
 })
 
 const PORT = 3001
