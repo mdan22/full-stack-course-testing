@@ -1,6 +1,3 @@
-// const http = require('http')
-// import http from 'http' // same logic, different syntax
-
 const express = require('express')
 const app = express()
 
@@ -37,21 +34,6 @@ app.get('/api/notes', (request, response) => {
     // appropriate value of application/json.
 })
 
-// const app = http.createServer((request, response) => {
-//     response.writeHead(200, {'Content-Type': 'text/plain'})
-//     response.end(JSON.stringify(notes))
-// })
-
-// In the earlier version where we were only using Node, we
-// had to transform the data into the JSON formatted string
-// with the JSON.stringify method.
-
-// With Express, this is no longer required, because this
-// transformation happens automatically.
-
-// It's worth noting that JSON is a string and not a
-// JavaScript object like the value assigned to notes.
-
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id) // fix: changed id from string to number:
   const note = notes.find(note => note.id === id)
@@ -65,7 +47,7 @@ app.get('/api/notes/:id', (request, response) => {
 
 app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
-  const note = notes.filter(note => note.id !== id)
+  notes = notes.filter(note => note.id !== id)
   response.status(204).end()
 })
 
