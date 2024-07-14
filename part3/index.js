@@ -62,3 +62,9 @@ console.log(`Server running on port ${PORT}`)
 // notes/10	DELETE	removes the identified resource
 // notes/10	PUT	replaces the entire identified resource with the request data
 // notes/10	PATCH	replaces a part of the identified resource with the request data
+
+// For backend testing of http verb operations there are plenty of tools to choose from:
+// - curl
+// - Postman
+// - The Visual Studio Code REST client
+// - The WebStorm HTTP Client
