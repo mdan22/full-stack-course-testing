@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
+
 let notes = [
     {
         id: 1,
@@ -49,6 +51,40 @@ app.delete('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id)
   notes = notes.filter(note => note.id !== id)
   response.status(204).end()
+})
+
+// the array created by map() gets transformed into
+// individual numbers by using the "three dot" spread syntax ...
+const generateId = () => {
+  const maxId = notes.length > 0
+  ? Math.max(...notes.map(n => Number(n.id)))
+  : 0
+  return maxId + 1
+}
+
+app.post('/api/notes', (request, response) => {
+  const body = request.body
+  console.log(body)
+
+  // make sure notes can't be added if body content is empty
+  if(!body.content) {
+    return response.status(400).json({
+      error: 'content missing'
+    })
+  }
+
+  // define the default value of important as false
+  const note = {
+    id: generateId(),
+    content: body.content,
+    important: Boolean(body.important) || false
+  }
+  
+  notes = notes.concat(note)
+
+  response.json(note)
+  // json-parser turns this JSON data (note) into a JS object
+  // and sends it back in the response
 })
 
 const PORT = 3001
