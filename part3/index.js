@@ -3,6 +3,21 @@ const app = express()
 
 app.use(express.json())
 
+// Middleware  are functions that can be used for handling request and response objects.
+
+// we make our own middleware that logs method path and body for each request object
+// middleware functions are called in the order that they're encountered by the JavaScript
+// so we make sure our requestLogger gets called after the json-parser
+const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path: ', request.path)
+  console.log('Body: ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
 let notes = [
     {
         id: 1,
@@ -119,3 +134,8 @@ console.log(`Server running on port ${PORT}`)
 
 // Safety and idempotency are just a recommendation in the HTTP standard
 // and not something that can be guaranteed simply based on the request type.
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({error: 'unknown endpoint'})
+}
+app.use(unknownEndpoint)
