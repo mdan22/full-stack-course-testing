@@ -104,3 +104,18 @@ console.log(`Server running on port ${PORT}`)
 // - Postman
 // - The Visual Studio Code REST client
 // - The WebStorm HTTP Client
+
+// The HTTP standard talks about two properties related to
+// request types: safety and idempotency
+
+// GET and HEAD methods are considered "safe" since they
+// do not cause any side effects on the server
+
+// GET, HEAD, PUT and DELETE are idempotent which means:
+// (aside from error or expiration issues) the side-effects
+// of N > 0 identical requests is the same as for a single request.
+
+// POST is the only HTTP request type that is neither safe nor idempotent.
+
+// Safety and idempotency are just a recommendation in the HTTP standard
+// and not something that can be guaranteed simply based on the request type.
