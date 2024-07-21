@@ -104,7 +104,10 @@ app.post('/api/notes', (request, response) => {
   // and sends it back in the response
 })
 
-const PORT = 3001
+// we are using the port defined in the environment variable PORT
+// or port 3001 if the environment variable PORT is undefined.
+
+const PORT = process.env.PORT || 3001
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
 
