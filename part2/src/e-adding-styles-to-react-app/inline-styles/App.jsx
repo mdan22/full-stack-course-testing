@@ -8,7 +8,7 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
-  const [errorMessage, setErrorMessage] = useState('some error happened...')
+  const [errorMessage, setErrorMessage] = useState(null) // set initial value to null
 
   // we use noteService.getAll() instead of axios.get(...)
   useEffect(() => {
