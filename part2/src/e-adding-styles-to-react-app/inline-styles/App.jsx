@@ -101,3 +101,10 @@ const App = () => {
 // button.
 
 export default App
+
+// A production build for applications created with Vite can be created
+// with npm run build.
+// This creates a directory called dist which contains the only HTML file
+// of our application (index.html) and the directory assets.
+// Minified version of our application's JavaScript code will be
+// generated in the dist directory.
