@@ -25,11 +25,14 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model('Note', noteSchema)
 
+// create a new note object with the help of the Note model
 const note = new Note({
-  content: 'HTML is easy',
+  content: 'Mongoose makes things easy',
   important: true,
 })
 
+// define save method which becomes usable for all objects of the database
+// save() saves the object to the database
 note.save().then(result => {
   console.log('note saved!')
   mongoose.connection.close()
