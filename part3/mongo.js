@@ -14,8 +14,10 @@ const url =
 
 mongoose.set('strictQuery',false)
 
+// establish the connection to the database
 mongoose.connect(url)
 
+// define the schema for a note and the matching model
 const noteSchema = new mongoose.Schema({
   content: String,
   important: Boolean,
