@@ -25,15 +25,25 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model('Note', noteSchema)
 
-// create a new note object with the help of the Note model
-const note = new Note({
-  content: 'Mongoose makes things easy',
-  important: true,
-})
+// // create a new note object with the help of the Note model
+// const note = new Note({
+//   content: 'Mongoose makes things easy',
+//   important: true,
+// })
 
-// call save method which saves the object to the database
-// and close the connection to end the execution of this code
-note.save().then(result => {
-  console.log('note saved!')
+// // call save method which saves the object to the database
+// // and close the connection to end the execution of this code
+// note.save().then(result => {
+//   console.log('note saved!')
+//   mongoose.connection.close()
+// })
+
+// retrieve objects from the DB with the find method
+// the parameter of find() expresses search conditions
+// so an emoty object {} results in getting all notes stored in the notes collection
+Note.find({}).then(result => {
+  result.forEach(note => {
+    console.log(note)
+  })
   mongoose.connection.close()
 })
