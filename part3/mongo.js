@@ -31,8 +31,8 @@ const note = new Note({
   important: true,
 })
 
-// define save method which becomes usable for all objects of the database
-// save() saves the object to the database
+// call save method which saves the object to the database
+// and close the connection to end the execution of this code
 note.save().then(result => {
   console.log('note saved!')
   mongoose.connection.close()
