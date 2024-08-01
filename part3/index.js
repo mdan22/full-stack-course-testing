@@ -1,33 +1,21 @@
-require('dotenv').config();
+// It's important that dotenv gets imported before
+// the note model is imported. This ensures that
+// the environment variables from the .env file are
+// available globally before the code from the other
+// modules is imported.
+require('dotenv').config()
+
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const mongoose = require('mongoose')
+
+// the Note variable is assigned to the
+// same object that the module defines
+const Note = require('./models/note')
 
 app.use(express.static('dist'))
 app.use(cors())
 app.use(express.json())
-
-const url = process.env.MONGODB_URI
-mongoose.set('strictQuery', false)
-mongoose.connect(url)
-
-const noteSchema = new mongoose.Schema({
-  content: String,
-  important: Boolean,
-})
-
-// this method transforms the _id property (which is actually an object)
-// into a string just to be safe and to prevent issues in the future
-noteSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-  }
-})
-
-const Note = mongoose.model('Note', noteSchema)
 
 // Middleware  are functions that can be used for handling request and response objects.
 
@@ -130,10 +118,9 @@ app.post('/api/notes', (request, response) => {
   // and sends it back in the response
 })
 
-// we are using the port defined in the environment variable PORT
-// or port 3001 if the environment variable PORT is undefined.
+// now we always use the port defined in the environment variable PORT
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
 
