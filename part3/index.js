@@ -68,14 +68,11 @@ app.get('/api/notes', (request, response) => {
 })
 
 app.get('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id) // fix: changed id from string to number:
-  const note = notes.find(note => note.id === id)
-  if(note) { // if note is not undefined
+  // using Mongoose's findById simplifies the code a lot
+  // (error handling comes later)
+  Note.findById(request.params.id).then(note => {
     response.json(note)
-  }
-  else {
-    response.status(404).end()
-  }
+  })
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -105,17 +102,24 @@ app.post('/api/notes', (request, response) => {
   }
 
   // define the default value of important as false
-  const note = {
-    id: generateId(),
+  // use Note constructor function
+  const note = new Note({
+    // why do we remove the id?
+    // id: generateId(),
     content: body.content,
     important: Boolean(body.important) || false
-  }
-  
-  notes = notes.concat(note)
+  })
 
-  response.json(note)
-  // json-parser turns this JSON data (note) into a JS object
-  // and sends it back in the response
+  // // call save method which saves the object to the database
+  // // and close the connection to end the execution of this code
+  note.save().then(savedNote => {
+    // json-parser turns this JSON data (note) into a JS object
+    // and sends it back in the response
+    response.json(savedNote)
+  })
+
+  // for some reason we don't need mongoose.connection.close()
+  // when saving a note...
 })
 
 // now we always use the port defined in the environment variable PORT
