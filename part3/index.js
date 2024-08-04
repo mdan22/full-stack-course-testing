@@ -83,12 +83,7 @@ app.delete('/api/notes/:id', (request, response) => {
 
 // the array created by map() gets transformed into
 // individual numbers by using the "three dot" spread syntax ...
-const generateId = () => {
-  const maxId = notes.length > 0
-  ? Math.max(...notes.map(n => Number(n.id)))
-  : 0
-  return maxId + 1
-}
+// generateId() function no longer necessary
 
 app.post('/api/notes', (request, response) => {
   const body = request.body
