@@ -2,7 +2,7 @@
 
 This is a Repo for testing, coding, debugging stuff related to the full stack course that I'm doing rn.
 
-This repo is live at https://demiwave-fsct.onrender.com/ !
+This repo is live at [mdan22-fsct.onrender.com](https://mdan22-fsct.onrender.com/) !
 
 ## Related Links
 
