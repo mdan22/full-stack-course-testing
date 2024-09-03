@@ -105,8 +105,8 @@ app.post('/api/notes', (request, response) => {
     important: Boolean(body.important) || false
   })
 
-  // // call save method which saves the object to the database
-  // // and close the connection to end the execution of this code
+  // call save method which saves the object to the database
+  // and close the connection to end the execution of this code
   note.save().then(savedNote => {
     // json-parser turns this JSON data (note) into a JS object
     // and sends it back in the response
