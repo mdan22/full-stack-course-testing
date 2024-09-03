@@ -71,7 +71,15 @@ app.get('/api/notes/:id', (request, response) => {
   // using Mongoose's findById simplifies the code a lot
   // (error handling comes later)
   Note.findById(request.params.id).then(note => {
-    response.json(note)
+    if(note) {
+      response.json(note)
+    } else {
+      response.json(404).end() // note 'not found'
+    }
+  })
+  .catch(error => {
+    console.log(error)
+    response.status(400).send({error: 'malformatted id'}) // 'bad request'
   })
 })
 
