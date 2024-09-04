@@ -32,6 +32,7 @@ const requestLogger = (request, response, next) => {
 
 app.use(requestLogger)
 
+
 let notes = [
     {
         id: 1,
@@ -67,7 +68,7 @@ app.get('/api/notes', (request, response) => {
   })
 })
 
-app.get('/api/notes/:id', (request, response) => {
+app.get('/api/notes/:id', (request, response, next) => {
   // using Mongoose's findById simplifies the code a lot
   // (error handling comes later)
   Note.findById(request.params.id).then(note => {
@@ -77,10 +78,7 @@ app.get('/api/notes/:id', (request, response) => {
       response.json(404).end() // note 'not found'
     }
   })
-  .catch(error => {
-    console.log(error)
-    response.status(400).send({error: 'malformatted id'}) // 'bad request'
-  })
+  .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response) => {
@@ -124,6 +122,18 @@ app.post('/api/notes', (request, response) => {
   // for some reason we don't need mongoose.connection.close()
   // when saving a note...
 })
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+  if(error.name === 'CastError') {
+    return response.status(400).send({error:'malformatted id'})
+  }
+  next(error)
+}
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+
+app.use(errorHandler)
 
 // now we always use the port defined in the environment variable PORT
 
