@@ -123,18 +123,6 @@ app.post('/api/notes', (request, response) => {
   // when saving a note...
 })
 
-const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-  if(error.name === 'CastError') {
-    return response.status(400).send({error:'malformatted id'})
-  }
-  next(error)
-}
-
-// this has to be the last loaded middleware, also all the routes should be registered before this!
-
-app.use(errorHandler)
-
 // now we always use the port defined in the environment variable PORT
 
 const PORT = process.env.PORT
@@ -173,4 +161,25 @@ console.log(`Server running on port ${PORT}`)
 const unknownEndpoint = (request, response) => {
   response.status(404).send({error: 'unknown endpoint'})
 }
+
+// It's also important that the middleware for handling unsupported
+// routes (unknown endpoint) is next to the last middleware
+// (here: app.post(...)) that is loaded into Express,
+// just before the error handler.
+
+// handler of requests with unknown endpoint
 app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+  if(error.name === 'CastError') {
+    return response.status(400).send({error:'malformatted id'})
+  }
+  next(error)
+}
+
+// this has to be the last loaded middleware,
+// also all the routes should be registered before this!
+
+// handler of requests that result in errors
+app.use(errorHandler)
