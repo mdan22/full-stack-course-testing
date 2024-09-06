@@ -81,10 +81,12 @@ app.get('/api/notes/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-app.delete('/api/notes/:id', (request, response) => {
-  const id = Number(request.params.id)
-  notes = notes.filter(note => note.id !== id)
-  response.status(204).end()
+app.delete('/api/notes/:id', (request, response, next) => {
+  Note.findByIdAndDelete(request.params.id)
+  .then(result => {
+    // in both cases (id exists or not) we respond with the same code
+    response.status(204).end() // 204 means "no content"
+  }).catch(error => next(error)) // next passes exceptions to the error handler
 })
 
 // the array created by map() gets transformed into
@@ -121,6 +123,21 @@ app.post('/api/notes', (request, response) => {
 
   // for some reason we don't need mongoose.connection.close()
   // when saving a note...
+})
+
+app.put('/api/notes/:id', (request, response, next) => {
+  const body = request.body
+  const note = {
+    content: body.content,
+    important: body.important,
+  }
+  // we need the {new: true} parameter so the modified version
+  // of the note is given to the event handler
+  Note.findByIdAndUpdate(request.params.id, note, {new: true})
+  .then(updatedNote => {
+    response.json(updatedNote)
+  })
+  .catch(error => next(error))
 })
 
 // now we always use the port defined in the environment variable PORT
