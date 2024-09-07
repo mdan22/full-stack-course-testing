@@ -1,20 +1,20 @@
-// It's important that dotenv gets imported before
-// the note model is imported. This ensures that
-// the environment variables from the .env file are
-// available globally before the code from the other
-// modules is imported.
+// important: envs need to be available globally before
+// the code from other modules is imported.
 require('dotenv').config()
 
 const express = require('express')
 const app = express()
 const cors = require('cors')
-
-// the Note variable is assigned to the
-// same object that the module defines
 const Note = require('./models/note')
 
+// use static to make Express show static content, the
+// page index.html and the JavaScript, etc. which it fetches
 app.use(express.static('dist'))
+
+// use cors to allow for requests from all origins
 app.use(cors())
+
+// use the middleware 'json-parser' from the express package
 app.use(express.json())
 
 // Middleware  are functions that can be used for handling request and response objects.
@@ -31,25 +31,6 @@ const requestLogger = (request, response, next) => {
 }
 
 app.use(requestLogger)
-
-
-let notes = [
-    {
-        id: 1,
-        content: "HTML is easy",
-        important: true
-      },
-      {
-        id: 2,
-        content: "Browser can execute only JavaScript",
-        important: false
-      },
-      {
-        id: 3,
-        content: "GET and POST are the most important methods of HTTP protocol",
-        important: true
-      }
-]
 
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>')
@@ -140,12 +121,6 @@ app.put('/api/notes/:id', (request, response, next) => {
   .catch(error => next(error))
 })
 
-// now we always use the port defined in the environment variable PORT
-
-const PORT = process.env.PORT
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
-
 // URL	verb	functionality
 // notes/10	GET	fetches a single resource
 // notes	GET	fetches all resources in the collection
@@ -200,3 +175,9 @@ const errorHandler = (error, request, response, next) => {
 
 // handler of requests that result in errors
 app.use(errorHandler)
+
+// now we always use the port defined in the environment variable PORT
+
+const PORT = process.env.PORT
+app.listen(PORT)
+console.log(`Server running on port ${PORT}`)
