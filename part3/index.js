@@ -74,12 +74,12 @@ app.delete('/api/notes/:id', (request, response, next) => {
 // individual numbers by using the "three dot" spread syntax ...
 // generateId() function no longer necessary
 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   const body = request.body
   console.log(body)
 
   // make sure notes can't be added if body content is empty
-  if(!body.content) {
+  if(body.content === undefined) {
     return response.status(400).json({
       error: 'content missing'
     })
@@ -101,20 +101,24 @@ app.post('/api/notes', (request, response) => {
     // and sends it back in the response
     response.json(savedNote)
   })
+  .catch(error => next(error))
 
   // for some reason we don't need mongoose.connection.close()
   // when saving a note...
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
-  const body = request.body
-  const note = {
-    content: body.content,
-    important: body.important,
-  }
+  // we simplified the note object
+  const { content, important } = request.body
+
   // we need the {new: true} parameter so the modified version
   // of the note is given to the event handler
-  Note.findByIdAndUpdate(request.params.id, note, {new: true})
+  Note.findByIdAndUpdate(
+    request.params.id,
+    { content, important },
+    // added runValidators: true so the validation works for PUT route
+    { new: true, runValidators: true, context: 'query' }
+  )
   .then(updatedNote => {
     response.json(updatedNote)
   })
@@ -166,6 +170,8 @@ const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if(error.name === 'CastError') {
     return response.status(400).send({error:'malformatted id'})
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({error: error.message}) // why do we use .json here?
   }
   next(error)
 }

@@ -17,7 +17,14 @@ mongoose.connect(url)
     })
 
 const noteSchema = new mongoose.Schema({
-    content: String,
+    // The content field is now required to be at least
+    // five characters long and it is set as required,
+    // meaning that it can not be missing.
+    content: {
+        type: String,
+        minLength: 5,
+        required: true
+    },
     important: Boolean,
 })
 
