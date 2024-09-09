@@ -1,1 +1,1 @@
-GET http://localhost:3001/api/notes
+GET https://mdan22-fsct.onrender.com/api/notes
