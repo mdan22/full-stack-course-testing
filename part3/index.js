@@ -112,11 +112,12 @@ app.put('/api/notes/:id', (request, response, next) => {
   const { content, important } = request.body
 
   // we need the {new: true} parameter so the modified version
-  // of the note is given to the event handler
+  // of the note 'updatedNote' is given to the event handler
   Note.findByIdAndUpdate(
     request.params.id,
     { content, important },
-    // added runValidators: true so the validation works for PUT route
+    // added runValidators: true, context: 'query'
+    // so the validation works for PUT route
     { new: true, runValidators: true, context: 'query' }
   )
   .then(updatedNote => {
@@ -173,6 +174,7 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({error: error.message}) // why do we use .json here?
   }
+
   next(error)
 }
 
