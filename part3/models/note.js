@@ -1,20 +1,4 @@
 const mongoose = require('mongoose')
-mongoose.set('strictQuery', false)
-
-const url = process.env.MONGODB_URI
-
-// we log the url as DB address instead of hardcoding it
-console.log('connecting to ', url)
-
-// logs a message to the console about the
-// success status when trying to connect
-mongoose.connect(url)
-  .then( () => {
-    console.log('connected to MongoDB')
-  })
-  .catch(error => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
 
 const noteSchema = new mongoose.Schema({
   // The content field is now required to be at least
@@ -22,8 +6,8 @@ const noteSchema = new mongoose.Schema({
   // meaning that it can not be missing.
   content: {
     type: String,
-    minLength: 5,
-    required: true
+    required: true,
+    minLength: 5
   },
   important: Boolean,
 })
