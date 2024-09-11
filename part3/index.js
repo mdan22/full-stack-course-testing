@@ -7,8 +7,8 @@ const app = express()
 const cors = require('cors')
 const Note = require('./models/note')
 
-// use static to make Express show static content, the
-// page index.html and the JavaScript, etc. which it fetches
+// use static to make Express show static content, the
+// page index.html and the JavaScript, etc. which it fetches
 app.use(express.static('dist'))
 
 // use cors to allow for requests from all origins
@@ -33,10 +33,10 @@ const requestLogger = (request, response, next) => {
 app.use(requestLogger)
 
 app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>')
-    // Express automatically sets the value of the
-    // Content-Type header to be text/html. The status
-    // code of the response defaults to 200.
+  response.send('<h1>Hello World!</h1>')
+  // Express automatically sets the value of the
+  // Content-Type header to be text/html. The status
+  // code of the response defaults to 200.
 })
 
 app.get('/api/notes', (request, response) => {
@@ -52,22 +52,23 @@ app.get('/api/notes', (request, response) => {
 app.get('/api/notes/:id', (request, response, next) => {
   // using Mongoose's findById simplifies the code a lot
   // (error handling comes later)
-  Note.findById(request.params.id).then(note => {
-    if(note) {
-      response.json(note)
-    } else {
-      response.json(404).end() // note 'not found'
-    }
-  })
-  .catch(error => next(error))
+  Note.findById(request.params.id)
+    .then(note => {
+      if(note) {
+        response.json(note)
+      } else {
+        response.json(404).end() // note 'not found'
+      }
+    })
+    .catch(error => next(error))
 })
 
 app.delete('/api/notes/:id', (request, response, next) => {
   Note.findByIdAndDelete(request.params.id)
-  .then(result => {
-    // in both cases (id exists or not) we respond with the same code
-    response.status(204).end() // 204 means "no content"
-  }).catch(error => next(error)) // next passes exceptions to the error handler
+    .then( () => {
+      // in both cases (id exists or not) we respond with the same code
+      response.status(204).end() // 204 means "no content"
+    }).catch(error => next(error)) // next passes exceptions to the error handler
 })
 
 // the array created by map() gets transformed into
@@ -96,12 +97,15 @@ app.post('/api/notes', (request, response, next) => {
 
   // call save method which saves the object to the database
   // and close the connection to end the execution of this code
-  note.save().then(savedNote => {
-    // json-parser turns this JSON data (note) into a JS object
-    // and sends it back in the response
-    response.json(savedNote)
-  })
-  .catch(error => next(error))
+  note.save()
+    .then(
+      savedNote => {
+      // json-parser turns this JSON data (note) into a JS object
+      // and sends it back in the response
+        response.json(savedNote)
+      }
+    )
+    .catch(error => next(error))
 
   // for some reason we don't need mongoose.connection.close()
   // when saving a note...
@@ -120,10 +124,10 @@ app.put('/api/notes/:id', (request, response, next) => {
     // so the validation works for PUT route
     { new: true, runValidators: true, context: 'query' }
   )
-  .then(updatedNote => {
-    response.json(updatedNote)
-  })
-  .catch(error => next(error))
+    .then(updatedNote => {
+      response.json(updatedNote)
+    })
+    .catch(error => next(error))
 })
 
 // URL	verb	functionality
@@ -156,7 +160,7 @@ app.put('/api/notes/:id', (request, response, next) => {
 // and not something that can be guaranteed simply based on the request type.
 
 const unknownEndpoint = (request, response) => {
-  response.status(404).send({error: 'unknown endpoint'})
+  response.status(404).send({ error: 'unknown endpoint' })
 }
 
 // It's also important that the middleware for handling unsupported
@@ -170,9 +174,9 @@ app.use(unknownEndpoint)
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if(error.name === 'CastError') {
-    return response.status(400).send({error:'malformatted id'})
+    return response.status(400).send({ error:'malformatted id' })
   } else if (error.name === 'ValidationError') {
-    return response.status(400).json({error: error.message}) // why do we use .json here?
+    return response.status(400).json({ error: error.message }) // why do we use .json here?
   }
 
   next(error)
@@ -189,3 +193,5 @@ app.use(errorHandler)
 const PORT = process.env.PORT
 app.listen(PORT)
 console.log(`Server running on port ${PORT}`)
+
+// I also fixed all the warnings from ESLint
