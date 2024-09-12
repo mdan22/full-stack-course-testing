@@ -4,14 +4,17 @@ const app = express()
 const cors = require('cors')
 const notesRouter = require('./controllers/notes')
 const middleware = require('./utils/middleware')
+
 const logger = require('./utils/logger')
 
 // alternatively we could destructure the functions to their own variables
 // this second way of exporting may be preferable if only a small portion
 // of the exported functions are used in a file
-// const { info, error } = require('./utils/logger')
-// info('message')
-// error('error message')
+const { info, error }  = logger
+
+// the reference to these two use cases still can't be found
+info('message')
+error('error message')
 
 const mongoose = require('mongoose')
 
