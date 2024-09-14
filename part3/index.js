@@ -1,5 +1,5 @@
-// important: envs (-> config) need to be available globally before
-// the code from other modules is imported.
+// index.js is the entry point of the app
+// it imports the app module and starts the server
 
 const app = require('./app') // the actual Express application
 const config = require('./utils/config')

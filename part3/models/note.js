@@ -1,3 +1,6 @@
+// note.js defines the Mongoose schema for notes
+// and sets the toJSON method for the schema
+
 const mongoose = require('mongoose')
 
 const noteSchema = new mongoose.Schema({

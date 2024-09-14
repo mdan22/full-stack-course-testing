@@ -1,3 +1,7 @@
+// app.js creates the actual application
+// and takes the router into use
+// it also is responsible of establishing the connection to MongoDB
+
 const config = require('./utils/config')
 const express = require('express')
 const app = express()

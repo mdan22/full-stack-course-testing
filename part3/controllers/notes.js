@@ -1,3 +1,5 @@
+// notes.js defines the routes for the note list
+
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 

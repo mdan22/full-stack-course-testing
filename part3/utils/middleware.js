@@ -1,3 +1,5 @@
+// middleware.js contains the middleware functions
+
 const logger = require('./logger')
 
 // we make our own middleware that logs method path and body for each request object

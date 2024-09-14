@@ -1,3 +1,6 @@
+// extracting logging into its own module
+// this makes using external logging service easier
+
 const info = (...params) => {
   console.log(...params)
 }
