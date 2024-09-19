@@ -1,20 +1,9 @@
 const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
-const Note = require('../models/note')
 
-const initialNotes = [
-  {
-    content: 'HTML is easy',
-    important: false,
-  },
-  {
-    content: 'Browser can execute only JavaScript',
-    important: true,
-  },
-]
-
-const mongoose = require('mongoose')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
+const helper = require('./test_helper')
 
 // imports the express application from app.js
 const app = require('../app')
@@ -22,18 +11,19 @@ const app = require('../app')
 const api = supertest(app)
 // now tests can use the api var for making HTTP requests to the backend
 
+const Note = require('../models/note')
 
 beforeEach(async () => {
   await Note.deleteMany({})
-  let noteObject = new Note(initialNotes[0])
+  let noteObject = new Note(helper.initialNotes[0])
   await noteObject.save()
-  noteObject = new Note(initialNotes[1])
+  noteObject = new Note(helper.initialNotes[1])
   await noteObject.save()
 })
 
 // The async/await syntax is related to the fact that making a request
 // to the API is an asynchronous operation.
-test.only('notes are returned as json', async () => {
+test('notes are returned as json', async () => {
   await api
     .get('/api/notes')
     .expect(200)
@@ -45,23 +35,59 @@ test.only('notes are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test.only('there are two notes', async () => {
+test('all notes are returned', async () => {
   const response = await api.get('/api/notes')
 
   // execution gets here only after the HTTP request is complete
   // the result of HTTP request is saved in variable response
-  assert.strictEqual(response.body.length, initialNotes.length)
+  assert.strictEqual(response.body.length, helper.initialNotes.length)
 })
 
-test('the first note is about HTTP methods', async () => {
+test('a specific note is within the returned notes', async () => {
   const response = await api.get('/api/notes')
 
   // create an array 'contents' with each content attribute of the notes
-  const contents = response.body.map(e => e.content)
+  const contents = response.body.map(r => r.content)
 
   // assert.strictEqual(contents.includes('HTML is easy'), true)
   // we can simplify this using assert itself:
   assert(contents.includes('HTML is easy'))
+})
+
+// test adds a new note and verifies that the number of notes returned
+// by the API increases and that the newly added note is in the list
+test('a valid note can be added', async () => {
+  const newNote = {
+    content: 'async/await simplifies making async calls',
+    important: true
+  }
+
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const notesAtEnd = await helper.notesInDb()
+  assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
+
+  const contents = notesAtEnd.map(n => n.content)
+  assert(contents.includes('async/await simplifies making async calls'))
+})
+
+// test verifies that a note without content will not be saved to DB
+test('note without content is not added', async () => {
+  const newNote = {
+    important: true
+  }
+
+  await api
+    .post('/api/notes')
+    .send(newNote)
+    .expect(400)
+
+  const notesAtEnd = await helper.notesInDb()
+  assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
 })
 
 // after all the tests ran we close the DB connection using after
@@ -79,6 +105,3 @@ after(async () => {
 
 // benefit of using async: we can access the data returned from http requests more easily
 // (no need to use callback functions and promises)
-
-// the collection testNoteApp doesn't exist yet and thus the tests are failing
-// but in the next subpart it will be handled

@@ -22,7 +22,7 @@ notesRouter.get('/', async (request, response) => {
 // makes the code look synchronous.
 
 // example1: fetching notes from DB with promises looks like this:
-notesRouter.get('/example1', (request, response) => {
+notesRouter.get('/example1', () => {
   // Note.find() returns a promise and we can access the result
   // of it by registering a callback function with .then
   Note.find({}).then(notes => {
@@ -36,14 +36,14 @@ notesRouter.get('/example1', (request, response) => {
 // By chaining promises we could keep the situation somewhat under control:
 
 // example2: using chaining promises to keep code with several async calls clean
-notesRouter.get('/example2', (request, response) => {
+notesRouter.get('/example2', () => {
   // Note.find() returns a promise and we can access the result
   // of it by registering a callback function with .then
   Note.find({})
     .then(notes => {
       return notes[0].deleteOne()
     })
-    .then(response => {
+    .then(() => {
       console.log('the first note is removed')
       // more code here
     })
@@ -63,6 +63,7 @@ notesRouter.get('/example4', async () => {
   const response = await notes[0].deleteOne()
 
   console.log('the first note is removed')
+  response.json(response)
 })
 
 notesRouter.get('/:id', (request, response, next) => {
@@ -79,7 +80,7 @@ notesRouter.get('/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-notesRouter.post('/', (request, response, next) => {
+notesRouter.post('/', async (request, response, next) => {
   const body = request.body
 
   // make sure notes can't be added if body content is empty
@@ -92,26 +93,19 @@ notesRouter.post('/', (request, response, next) => {
   // define the default value of important as false
   // use Note constructor function
   const note = new Note({
-    // why do we remove the id?
-    // id: generateId(),
     content: body.content,
     important: Boolean(body.important) || false
   })
 
   // call save method which saves the object to the database
   // and close the connection to end the execution of this code
-  note.save()
-    .then(
-      savedNote => {
-        // json-parser turns this JSON data (note) into a JS object
-        // and sends it back in the response
-        response.json(savedNote)
-      }
-    )
-    .catch(error => next(error))
+  const savedNote = await note.save()
 
-  // for some reason we don't need mongoose.connection.close()
-  // when saving a note...
+  // json-parser turns this JSON data (note) into a JS object
+  // and sends it back in the response
+  response.status(201).json(savedNote)
+  // error handling and async/wait comes in the next part
+  // .catch(error => next(error))
 })
 
 notesRouter.delete('/:id', (request, response, next) => {
