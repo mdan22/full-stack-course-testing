@@ -1,5 +1,17 @@
-const { test, after } = require('node:test')
+const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
+const Note = require('../models/note')
+
+const initialNotes = [
+  {
+    content: 'HTML is easy',
+    important: false,
+  },
+  {
+    content: 'Browser can execute only JavaScript',
+    important: true,
+  },
+]
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -9,6 +21,15 @@ const app = require('../app')
 // wraps the app with supertest function into a superagent object
 const api = supertest(app)
 // now tests can use the api var for making HTTP requests to the backend
+
+
+beforeEach(async () => {
+  await Note.deleteMany({})
+  let noteObject = new Note(initialNotes[0])
+  await noteObject.save()
+  noteObject = new Note(initialNotes[1])
+  await noteObject.save()
+})
 
 // The async/await syntax is related to the fact that making a request
 // to the API is an asynchronous operation.
@@ -29,7 +50,7 @@ test('there are two notes', async () => {
 
   // execution gets here only after the HTTP request is complete
   // the result of HTTP request is saved in variable response
-  assert.strictEqual(response.body.length, 9)
+  assert.strictEqual(response.body.length, initialNotes.length)
 })
 
 test('the first note is about HTTP methods', async () => {
@@ -40,7 +61,7 @@ test('the first note is about HTTP methods', async () => {
 
   // assert.strictEqual(contents.includes('HTML is easy'), true)
   // we can simplify this using assert itself:
-  assert(contents.includes('HTML is easy'), true)
+  assert(contents.includes('HTML is easy'))
 })
 
 // after all the tests ran we close the DB connection using after
