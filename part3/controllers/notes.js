@@ -13,6 +13,53 @@ notesRouter.get('/', (request, response) => {
   })
 })
 
+// The async/await syntax that was introduced in ES7 makes it possible
+// to use asynchronous functions that return a promise in a way that
+// makes the code look synchronous.
+
+// example1: fetching notes from DB with promises looks like this:
+notesRouter.get('/example1', (request, response) => {
+  // Note.find() returns a promise and we can access the result
+  // of it by registering a callback function with .then
+  Note.find({}).then(notes => {
+    console.log('operation returned the following notes', notes)
+  })
+})
+
+// If we wanted to make several asynchronous function calls
+// in sequence, the situation would soon become painful:
+
+// By chaining promises we could keep the situation somewhat under control:
+
+// example2: using chaining promises to keep code with several async calls clean
+notesRouter.get('/example2', (request, response) => {
+  // Note.find() returns a promise and we can access the result
+  // of it by registering a callback function with .then
+  Note.find({})
+  .then(notes => {
+    return notes[0].deleteOne()
+  })
+  .then(response => {
+    console.log('the first note is removed')
+    // more code here
+})
+
+// example3: using await to fetch all notes from DB:
+// The code looks exactly like synchronous code.
+notesRouter.get('/example3', async () => {
+  const notes = await Note.find({}) // wait until the related promise is fulfilled
+
+  console.log('operation returned the following notes', notes)
+})
+
+// example4: using await to implement example2
+notesRouter.get('/example4', async () => {
+  const notes = await Note.find({})
+  const response = await notes[0].deleteOne()
+
+  console.log('the first note is removed')
+})
+
 notesRouter.get('/:id', (request, response, next) => {
   // using Mongoose's findById simplifies the code a lot
   // (error handling comes later)
