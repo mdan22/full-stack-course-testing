@@ -33,7 +33,7 @@ beforeEach(async () => {
 
 // The async/await syntax is related to the fact that making a request
 // to the API is an asynchronous operation.
-test('notes are returned as json', async () => {
+test.only('notes are returned as json', async () => {
   await api
     .get('/api/notes')
     .expect(200)
@@ -45,7 +45,7 @@ test('notes are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-test('there are two notes', async () => {
+test.only('there are two notes', async () => {
   const response = await api.get('/api/notes')
 
   // execution gets here only after the HTTP request is complete
