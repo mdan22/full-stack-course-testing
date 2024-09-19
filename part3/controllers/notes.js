@@ -3,14 +3,18 @@
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 
-notesRouter.get('/', (request, response) => {
-  Note.find({}).then(notes => {
-    // response.json sends the notes array that was passed
-    // to it as a JSON formatted string. Express
-    // automatically sets the Content-Type header with the
-    // appropriate value of application/json.
-    response.json(notes)
-  })
+// we now use async and await...
+// As all of the asynchronous operations are currently done inside of
+// a function, it is enough to change the route handler functions
+// into async functions
+
+notesRouter.get('/', async (request, response) => {
+  const notes = await Note.find({})
+  // response.json sends the notes array that was passed
+  // to it as a JSON formatted string. Express
+  // automatically sets the Content-Type header with the
+  // appropriate value of application/json.
+  response.json(notes)
 })
 
 // The async/await syntax that was introduced in ES7 makes it possible
@@ -36,12 +40,13 @@ notesRouter.get('/example2', (request, response) => {
   // Note.find() returns a promise and we can access the result
   // of it by registering a callback function with .then
   Note.find({})
-  .then(notes => {
-    return notes[0].deleteOne()
-  })
-  .then(response => {
-    console.log('the first note is removed')
-    // more code here
+    .then(notes => {
+      return notes[0].deleteOne()
+    })
+    .then(response => {
+      console.log('the first note is removed')
+      // more code here
+    })
 })
 
 // example3: using await to fetch all notes from DB:
