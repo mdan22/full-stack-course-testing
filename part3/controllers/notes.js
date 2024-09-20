@@ -66,18 +66,19 @@ notesRouter.get('/example4', async () => {
   response.json(response)
 })
 
-notesRouter.get('/:id', (request, response, next) => {
+notesRouter.get('/:id', async (request, response, next) => {
   // using Mongoose's findById simplifies the code a lot
-  // (error handling comes later)
-  Note.findById(request.params.id)
-    .then( note => {
-      if(note) {
-        response.json(note)
-      } else {
-        response.json(404).end() // note 'not found'
-      }
-    })
-    .catch(error => next(error))
+  try{
+    const note = await Note.findById(request.params.id)
+
+    if(note) {
+      response.json(note)
+    } else {
+      response.status(404).end() // note 'not found'
+    }
+  } catch(exception) {
+    next(exception)
+  }
 })
 
 notesRouter.post('/', async (request, response, next) => {
@@ -98,23 +99,26 @@ notesRouter.post('/', async (request, response, next) => {
   })
 
   // call save method which saves the object to the database
-  // and close the connection to end the execution of this code
-  const savedNote = await note.save()
-
-  // json-parser turns this JSON data (note) into a JS object
-  // and sends it back in the response
-  response.status(201).json(savedNote)
-  // error handling and async/wait comes in the next part
-  // .catch(error => next(error))
+  // error handling with async/wait is done with try-catch
+  try {
+    const savedNote = await note.save()
+    // json-parser turns this JSON data (note) into a JS object
+    // and sends it back in the response
+    response.status(201).json(savedNote)
+  }
+  catch(exception) {
+    next(exception)
+  }
 })
 
-notesRouter.delete('/:id', (request, response, next) => {
-  Note.findByIdAndDelete(request.params.id)
-    .then(() => {
-      // in both cases (id exists or not) we respond with the same code
-      response.status(204).end() // 204 means "no content"
-    })
-    .catch(error => next(error)) // next passes exceptions to the error handler
+notesRouter.delete('/:id', async (request, response, next) => {
+  try {
+    await Note.findByIdAndDelete(request.params.id)
+    // in both cases (id exists or not) we respond with the same code
+    response.status(204).end() // 204 means "no content"
+  } catch(exception) {
+    next(exception)
+  }
 })
 
 notesRouter.put('/:id', (request, response, next) => {
