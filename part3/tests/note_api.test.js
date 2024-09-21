@@ -57,25 +57,17 @@ describe('when there is initially some notes saved', async () => {
 
   describe('viewing a specific note', () => {
 
-    // test adds a new note and verifies that the number of notes returned
-    // by the API increases and that the newly added note is in the list
-    test('succeeds with valid data', async () => {
-      const newNote = {
-        content: 'async/await simplifies making async calls',
-        important: true
-      }
+    test('succeeds with a valid id', async () => {
+      const notesAtStart = await helper.notesInDb()
 
-      await api
-        .post('/api/notes')
-        .send(newNote)
-        .expect(201) // content created
+      const noteToView = notesAtStart[0]
+
+      const resultNote = await api
+        .get(`/api/notes/${noteToView.id}`)
+        .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      const notesAtEnd = await helper.notesInDb()
-      assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
-
-      const contents = notesAtEnd.map(n => n.content)
-      assert(contents.includes('async/await simplifies making async calls'))
+      assert.deepStrictEqual(resultNote.body, noteToView)
     })
 
     test('fails with statuscode 404 if note does not exist', async () => {
@@ -98,6 +90,27 @@ describe('when there is initially some notes saved', async () => {
 
   describe('addition of a new note', () => {
 
+    // test adds a new note and verifies that the number of notes returned
+    // by the API increases and that the newly added note is in the list
+    test('succeeds with valid data', async () => {
+      const newNote = {
+        content: 'async/await simplifies making async calls',
+        important: true
+      }
+
+      await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(201) // content created
+        .expect('Content-Type', /application\/json/)
+
+      const notesAtEnd = await helper.notesInDb()
+      assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
+
+      const contents = notesAtEnd.map(n => n.content)
+      assert(contents.includes('async/await simplifies making async calls'))
+    })
+
     // test verifies that a note without content will not be saved to DB
     test('fails with status code 400 if data invalid', async () => {
       const newNote = {
@@ -112,38 +125,28 @@ describe('when there is initially some notes saved', async () => {
       const notesAtEnd = await helper.notesInDb()
       assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
     })
+  })
 
-    test('succeeds with a valid id', async () => {
+  describe('deletion of a note', () => {
+    test('succeeds with status code 204 if id is valid', async () => {
       const notesAtStart = await helper.notesInDb()
-      const noteToView = notesAtStart[0]
+      const noteToDelete = notesAtStart[0]
 
-      const resultNote = await api
-        .get(`/api/notes/${noteToView.id}`)
-        .expect(200)
-        .expect('Content-Type', /application\/json/)
+      await api
+        .delete(`/api/notes/${noteToDelete.id}`)
+        .expect(204)
 
-      assert.deepStrictEqual(resultNote.body, noteToView)
+      const notesAtEnd = await helper.notesInDb()
+      // I'm using notesAtStart here (instead of helper.initialNotes)so the test dynamically adapts to the current state of the database
+      assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1)
+
+      const contents = notesAtEnd.map(n => n.content)
+      assert(!contents.includes(noteToDelete.content))
     })
   })
 })
 
-describe('deletion of a note', () => {
-  test('succeeds with status code 204 if id is valid', async () => {
-    const notesAtStart = await helper.notesInDb()
-    const noteToDelete = notesAtStart[0]
 
-    await api
-      .delete(`/api/notes/${noteToDelete.id}`)
-      .expect(204)
-
-    const notesAtEnd = await helper.notesInDb()
-    // I'm using notesAtStart here (instead of helper.initialNotes)so the test dynamically adapts to the current state of the database
-    assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1)
-
-    const contents = notesAtEnd.map(n => n.content)
-    assert(!contents.includes(noteToDelete.content))
-  })
-})
 
 // after all the tests ran we close the DB connection using after
 after(async () => {
