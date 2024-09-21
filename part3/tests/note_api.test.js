@@ -1,9 +1,8 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const assert = require('node:assert')
 
-const supertest = require('supertest')
 const mongoose = require('mongoose')
-const helper = require('./test_helper')
+const supertest = require('supertest')
 
 // imports the express application from app.js
 const app = require('../app')
@@ -11,124 +10,148 @@ const app = require('../app')
 const api = supertest(app)
 // now tests can use the api var for making HTTP requests to the backend
 
+const helper = require('./test_helper')
+
 const Note = require('../models/note')
 
-beforeEach(async () => {
-  await Note.deleteMany({})
-  console.log('cleared')
+describe('when there is initially some notes saved', async () => {
+  beforeEach(async () => {
+    await Note.deleteMany({})
+    // use insertMany instead of for of loop to make code simpler
+    await Note.insertMany(helper.initialNotes)
+  })
 
-  for (let note of helper.initialNotes) {
-    let noteObject = new Note(note)
-    await noteObject.save()
-    console.log('saved')
-  }
+  // The async/await syntax is related to the fact that making a request
+  // to the API is an asynchronous operation.
+  test('notes are returned as json', async () => {
+    console.log('entered test')
+    await api
+      .get('/api/notes')
+      .expect(200)
+      // The desired value is defined as a regex
+      // which always starts and ends with a slash /
+      // so we need to use a \/
+      // also: regex is better practice here since
+      // the header only needs to contain the string
+      .expect('Content-Type', /application\/json/)
+  })
 
-  console.log('done')
+  test('all notes are returned', async () => {
+    const response = await api.get('/api/notes')
+
+    // execution gets here only after the HTTP request is complete
+    // the result of HTTP request is saved in variable response
+    assert.strictEqual(response.body.length, helper.initialNotes.length)
+  })
+
+  test('a specific note is within the returned notes', async () => {
+    const response = await api.get('/api/notes')
+
+    // create an array 'contents' with each content attribute of the notes
+    const contents = response.body.map(r => r.content)
+
+    // assert.strictEqual(contents.includes('HTML is easy'), true)
+    // we can simplify this using assert itself:
+    assert(contents.includes('HTML is easy'))
+  })
+
+  describe('viewing a specific note', () => {
+
+    // test adds a new note and verifies that the number of notes returned
+    // by the API increases and that the newly added note is in the list
+    test('succeeds with valid data', async () => {
+      const newNote = {
+        content: 'async/await simplifies making async calls',
+        important: true
+      }
+
+      await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(201) // content created
+        .expect('Content-Type', /application\/json/)
+
+      const notesAtEnd = await helper.notesInDb()
+      assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
+
+      const contents = notesAtEnd.map(n => n.content)
+      assert(contents.includes('async/await simplifies making async calls'))
+    })
+
+    test('fails with statuscode 404 if note does not exist', async () => {
+      const validNonexistingId = await helper.nonExistingId()
+
+      await api
+        .get(`/api/notes/${validNonexistingId}`)
+        .expect(404)
+    })
+
+    test('fails with statuscode 400 id is invalid', async () => {
+      const invalidId = '5a3d5da59070081a82a3445'
+
+      await api
+        .get(`/api/notes/${invalidId}`)
+        .expect(400)
+    })
+
+  })
+
+  describe('addition of a new note', () => {
+
+    // test verifies that a note without content will not be saved to DB
+    test('fails with status code 400 if data invalid', async () => {
+      const newNote = {
+        important: true
+      }
+
+      await api
+        .post('/api/notes')
+        .send(newNote)
+        .expect(400)
+
+      const notesAtEnd = await helper.notesInDb()
+      assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
+    })
+
+    test('succeeds with a valid id', async () => {
+      const notesAtStart = await helper.notesInDb()
+      const noteToView = notesAtStart[0]
+
+      const resultNote = await api
+        .get(`/api/notes/${noteToView.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+      assert.deepStrictEqual(resultNote.body, noteToView)
+    })
+  })
 })
 
-// The async/await syntax is related to the fact that making a request
-// to the API is an asynchronous operation.
-test('notes are returned as json', async () => {
-  console.log('entered test')
-  await api
-    .get('/api/notes')
-    .expect(200)
-    // The desired value is defined as a regex
-    // which always starts and ends with a slash /
-    // so we need to use a \/
-    // also: regex is better practice here since
-    // the header only needs to contain the string
-    .expect('Content-Type', /application\/json/)
-})
+describe('deletion of a note', () => {
+  test('succeeds with status code 204 if id is valid', async () => {
+    const notesAtStart = await helper.notesInDb()
+    const noteToDelete = notesAtStart[0]
 
-test('all notes are returned', async () => {
-  const response = await api.get('/api/notes')
+    await api
+      .delete(`/api/notes/${noteToDelete.id}`)
+      .expect(204)
 
-  // execution gets here only after the HTTP request is complete
-  // the result of HTTP request is saved in variable response
-  assert.strictEqual(response.body.length, helper.initialNotes.length)
-})
+    const notesAtEnd = await helper.notesInDb()
+    // I'm using notesAtStart here (instead of helper.initialNotes)so the test dynamically adapts to the current state of the database
+    assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1)
 
-test('a specific note is within the returned notes', async () => {
-  const response = await api.get('/api/notes')
-
-  // create an array 'contents' with each content attribute of the notes
-  const contents = response.body.map(r => r.content)
-
-  // assert.strictEqual(contents.includes('HTML is easy'), true)
-  // we can simplify this using assert itself:
-  assert(contents.includes('HTML is easy'))
-})
-
-// test adds a new note and verifies that the number of notes returned
-// by the API increases and that the newly added note is in the list
-test('a valid note can be added', async () => {
-  const newNote = {
-    content: 'async/await simplifies making async calls',
-    important: true
-  }
-
-  await api
-    .post('/api/notes')
-    .send(newNote)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
-
-  const notesAtEnd = await helper.notesInDb()
-  assert.strictEqual(notesAtEnd.length, helper.initialNotes.length + 1)
-
-  const contents = notesAtEnd.map(n => n.content)
-  assert(contents.includes('async/await simplifies making async calls'))
-})
-
-// test verifies that a note without content will not be saved to DB
-test('note without content is not added', async () => {
-  const newNote = {
-    important: true
-  }
-
-  await api
-    .post('/api/notes')
-    .send(newNote)
-    .expect(400)
-
-  const notesAtEnd = await helper.notesInDb()
-  assert.strictEqual(notesAtEnd.length, helper.initialNotes.length)
-})
-
-test('a specific note can be viewed', async () => {
-  const notesAtStart = await helper.notesInDb()
-  const noteToView = notesAtStart[0]
-
-  const resultNote = await api
-    .get(`/api/notes/${noteToView.id}`)
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
-
-  assert.deepStrictEqual(resultNote.body, noteToView)
-})
-
-test('a note can be deleted', async () => {
-  const notesAtStart = await helper.notesInDb()
-  const noteToDelete = notesAtStart[0]
-
-  await api
-    .delete(`/api/notes/${noteToDelete.id}`)
-    .expect(204)
-
-  const notesAtEnd = await helper.notesInDb()
-  // I'm using notesAtStart here (instead of helper.initialNotes)so the test dynamically adapts to the current state of the database
-  assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1)
-
-  const contents = notesAtEnd.map(n => n.content)
-  assert(!contents.includes(noteToDelete.content))
-
+    const contents = notesAtEnd.map(n => n.content)
+    assert(!contents.includes(noteToDelete.content))
+  })
 })
 
 // after all the tests ran we close the DB connection using after
 after(async () => {
   await mongoose.connection.close()
 })
+
+
+
 
 // Note: The tests only use the Express application defined in the app.js,
 // which does not listen to any ports.

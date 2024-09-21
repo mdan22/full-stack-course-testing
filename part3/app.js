@@ -4,7 +4,7 @@
 
 const config = require('./utils/config')
 const express = require('express')
-require('express-async-errors')
+require('express-async-errors') // actually not needed anymore in Express 5
 const app = express()
 const cors = require('cors')
 const notesRouter = require('./controllers/notes')

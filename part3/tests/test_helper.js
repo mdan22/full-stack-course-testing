@@ -18,7 +18,7 @@ const nonExistingId = async () => {
   await note.save()
   await note.deleteOne()
 
-  return note._id.toJSON
+  return note._id.toJSON()
 }
 
 // can be used for checking the notes stored in DB
