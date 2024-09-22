@@ -1,6 +1,8 @@
 // note.js defines the Mongoose schema for notes
 // and sets the toJSON method for the schema
 
+// the note references the user who created it
+
 const mongoose = require('mongoose')
 
 const noteSchema = new mongoose.Schema({
@@ -13,6 +15,10 @@ const noteSchema = new mongoose.Schema({
     minLength: 5
   },
   important: Boolean,
+  user: {
+    type: mongoose.Schema.Types.ObjectId, // the ids of the user is stored here
+    ref: 'User' // the syntax 'User' is purely related to and defined by Mongoose
+  }
 })
 
 // this method transforms the _id property (which is actually an object)
@@ -25,4 +31,6 @@ noteSchema.set('toJSON', {
   }
 })
 
-module.exports = mongoose.model('Note', noteSchema)
+const Note = mongoose.model('Note', noteSchema)
+
+module.exports = Note
