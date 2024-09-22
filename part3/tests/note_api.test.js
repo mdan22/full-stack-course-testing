@@ -78,7 +78,7 @@ describe('when there is initially some notes saved', async () => {
         .expect(404)
     })
 
-    test('fails with statuscode 400 id is invalid', async () => {
+    test('fails with status code 400 id is invalid', async () => {
       const invalidId = '5a3d5da59070081a82a3445'
 
       await api
@@ -137,7 +137,7 @@ describe('when there is initially some notes saved', async () => {
         .expect(204)
 
       const notesAtEnd = await helper.notesInDb()
-      // I'm using notesAtStart here (instead of helper.initialNotes)so the test dynamically adapts to the current state of the database
+      // using notesAtStart here (instead of helper.initialNotes) so the test dynamically adapts to the current state of the database
       assert.strictEqual(notesAtEnd.length, notesAtStart.length - 1)
 
       const contents = notesAtEnd.map(n => n.content)
@@ -145,8 +145,6 @@ describe('when there is initially some notes saved', async () => {
     })
   })
 })
-
-
 
 // after all the tests ran we close the DB connection using after
 after(async () => {

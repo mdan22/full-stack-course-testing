@@ -101,23 +101,22 @@ notesRouter.delete('/:id', async (request, response) => {
   response.status(204).end() // 204 means "no content"
 })
 
-notesRouter.put('/:id', (request, response, next) => {
+// updated the code to use async/await syntax and remove
+// the try/catch bc express 5 handles it internally
+notesRouter.put('/:id', async (request, response) => {
   // we simplified the note object
   const { content, important } = request.body
 
   // we need the {new: true} parameter so the modified version
   // of the note 'updatedNote' is given to the event handler
-  Note.findByIdAndUpdate(
+  const savedNote = await Note.findByIdAndUpdate(
     request.params.id,
     { content, important },
     // added runValidators: true, context: 'query'
     // so the validation works for PUT route
     { new: true, runValidators: true, context: 'query' }
   )
-    .then(updatedNote => {
-      response.json(updatedNote)
-    })
-    .catch(error => next(error))
+  response.json(savedNote)
 })
 
 module.exports = notesRouter
