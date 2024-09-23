@@ -21,7 +21,13 @@ usersRouter.post('/', async (request, response) => {
 })
 
 usersRouter.get('/', async (request, response) => {
-  const users = await User.find({})
+  // making a query that joins notes and users and returns
+  // only the content and important fields
+  const users =
+  await User
+    .find({})
+    .populate('notes', { content: 1, important: 1 })
+
   response.json(users)
 })
 

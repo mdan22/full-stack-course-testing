@@ -231,3 +231,6 @@ after(async () => {
 
 // Note: test-driven development (TDD): tests for new functionality are written
 // before the functionality is implemented
+
+// Note: now some tests will fail. We will leave fixing the tests to a non-compulsory exercise
+// Secondly, in the deployed notes app, the creating a note feature will stop working as user is not yet linked to the frontend

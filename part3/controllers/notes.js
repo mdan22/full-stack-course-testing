@@ -2,6 +2,7 @@
 
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
+const User = require('../models/user')
 
 // we now use async and await...
 // As all of the asynchronous operations are currently done inside of
@@ -9,7 +10,10 @@ const Note = require('../models/note')
 // into async functions
 
 notesRouter.get('/', async (request, response) => {
-  const notes = await Note.find({})
+  const notes =
+  await Note
+    .find({})
+    .populate('user', { username: 1, name: 1 }) // make a join query
   // response.json sends the notes array that was passed
   // to it as a JSON formatted string. Express
   // automatically sets the Content-Type header with the
@@ -76,19 +80,29 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
+// precondition: info about the user who created a note
+// is sent in the userId field of the request body
 notesRouter.post('/', async (request, response) => {
   const body = request.body
+
+  const user = await User.findById(body.userId)
 
   // define the default value of important as false
   // use Note constructor function
   const note = new Note({
     content: body.content,
-    important: Boolean(body.important) || false
+    important: body.important === undefined ? false : body.important,
+    user: user.id
   })
 
   // call save method which saves the object to the database
-  // error handling with async/wait is done with try-catch (but it is handled by the express-async-errors middleware)
+  // error handling with async/wait is done with try-catch
+  // but it is handled by the express-async-errors middleware
   const savedNote = await note.save()
+
+  // update field 'notes' of note ids in user object in db
+  user.notes = user.notes.concat(savedNote._id)
+  await user.save()
 
   // json-parser turns this JSON data (note) into a JS object
   // and sends it back in the response
