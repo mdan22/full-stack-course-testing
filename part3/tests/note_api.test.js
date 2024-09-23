@@ -14,6 +14,9 @@ const helper = require('./test_helper')
 
 const Note = require('../models/note')
 
+const bcrypt = require('bcrypt')
+const User = require('../models/user')
+
 describe('when there is initially some notes saved', async () => {
   beforeEach(async () => {
     await Note.deleteMany({})
@@ -146,13 +149,74 @@ describe('when there is initially some notes saved', async () => {
   })
 })
 
+
+
+describe('when there is initially one user in db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+
+    await user.save()
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'mluukkai',
+      name: 'Matti Luukkainen',
+      password: 'salainen',
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
+  test('creation fails with proper statuscode and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400) // bad request
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length)
+  })
+
+  // Could be implemented here:
+  // We could also implement other validations into the user creation.
+  // We could check that the username is long enough,
+  // that the username only consists of permitted characters,
+  // or that the password is strong enough.
+  // Implementing these functionalities is left as an optional exercise.
+
+})
+
 // after all the tests ran we close the DB connection using after
 after(async () => {
   await mongoose.connection.close()
 })
-
-
-
 
 // Note: The tests only use the Express application defined in the app.js,
 // which does not listen to any ports.
@@ -164,3 +228,6 @@ after(async () => {
 
 // benefit of using async: we can access the data returned from http requests more easily
 // (no need to use callback functions and promises)
+
+// Note: test-driven development (TDD): tests for new functionality are written
+// before the functionality is implemented

@@ -9,7 +9,13 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    required: true,
+    unique: true // this ensures the uniqueness of username
+    // If there are already documents in the database that
+    // violate the uniqueness condition, no index will be created
+  },
   name: String,
   passwordHash: String, // is saved internally ig but not visible once it is fetched -> toJSON
   notes: [
