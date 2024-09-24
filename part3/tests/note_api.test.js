@@ -14,14 +14,32 @@ const helper = require('./test_helper')
 
 const Note = require('../models/note')
 
-const bcrypt = require('bcrypt')
 const User = require('../models/user')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 describe('when there is initially some notes saved', async () => {
+  let token
   beforeEach(async () => {
     await Note.deleteMany({})
-    // use insertMany instead of for of loop to make code simpler
-    await Note.insertMany(helper.initialNotes)
+    // add user deletion before each test
+    await User.deleteMany({})
+
+    // create a new (temporary) user with user and passwordhash
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({ username: 'root', passwordHash })
+    // save user to db
+    await user.save()
+
+    // create token for the user
+    const userForToken = {
+      username: user.username,
+      id: user._id,
+    }
+    token = jwt.sign(userForToken, process.env.SECRET)
+
+    // add id of the new user to initialnotes list and save Notes of resulting list to db
+    await Note.insertMany(helper.initialNotes.map(note => ({ ...note, user: user._id })))
   })
 
   // The async/await syntax is related to the fact that making a request
@@ -70,7 +88,17 @@ describe('when there is initially some notes saved', async () => {
         .expect(200)
         .expect('Content-Type', /application\/json/)
 
-      assert.deepStrictEqual(resultNote.body, noteToView)
+      // Convert the user field to string in both objects before comparison
+      const processedNoteToView = {
+        ...noteToView,
+        user: noteToView.user.toString()
+      }
+      const processedResultNote = {
+        ...resultNote.body,
+        user: resultNote.body.user.toString()
+      }
+
+      assert.deepStrictEqual(processedResultNote, processedNoteToView)
     })
 
     test('fails with statuscode 404 if note does not exist', async () => {
@@ -96,18 +124,15 @@ describe('when there is initially some notes saved', async () => {
     // test adds a new note and verifies that the number of notes returned
     // by the API increases and that the newly added note is in the list
     test('succeeds with valid data', async () => {
-      // added adding userId to the note to make the test pass
-      const users = await helper.usersInDb()
-      const user = users[0]
 
       const newNote = {
         content: 'async/await simplifies making async calls',
         important: true,
-        userId: user.id
       }
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`) // we need set this to test if the authentication works
         .send(newNote)
         .expect(201) // content created
         .expect('Content-Type', /application\/json/)
@@ -127,6 +152,7 @@ describe('when there is initially some notes saved', async () => {
 
       await api
         .post('/api/notes')
+        .set('Authorization', `Bearer ${token}`) // we need set this to test if the authentication works
         .send(newNote)
         .expect(400)
 
