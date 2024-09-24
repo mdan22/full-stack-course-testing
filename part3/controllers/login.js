@@ -58,3 +58,12 @@ module.exports = loginRouter
 // That is why it is quite common to save the session corresponding to a token to
 // a key-value database such as Redis, that is limited in functionality compared to
 // e.g. MongoDB or a relational database, but extremely fast in some usage scenarios.
+
+// also: Usernames, passwords and applications using token authentication must always be used over HTTPS.
+// We could use a Node HTTPS server in our application instead of the HTTP server
+// (it requires more configuration). On the other hand, the production version of our
+// application is in Fly.io, so our application stays secure (Fly.io and Render.com route all traffic via HTTPS).
+
+// Due to making many changes, most of the tests have broken. Because this part of the course
+// is already jammed with new information, we will leave fixing the tests
+// to a non-compulsory exercise.
