@@ -12,9 +12,21 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true // this ensures the uniqueness of username
+    // this ensures the uniqueness of username
     // If there are already documents in the database that
     // violate the uniqueness condition, no index will be created
+    unique: true,
+    // make sure username is long enough (for optional exercise)
+    minlength: [3, 'Username must be at least 3 characters long'],
+    maxlength: [30, 'Username cannot be longer than 30 characters'], // 30 charas might be too long
+    // make sure username only consists of permitted characters (for optional exercise)
+    validator: {
+      // this is a custom validator
+      validate: (value) => {
+        return /^[a-zA-Z0-9_]*$/.test(value)
+      },
+      message: (props) => `${props.value} is not a valid username. Only letters, numbers, and underscores can be used.`
+    }
   },
   name: String,
   passwordHash: String, // is saved internally ig but not visible once it is fetched -> toJSON

@@ -172,7 +172,7 @@ describe('when there is initially one user in db', () => {
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
-      password: 'salainen',
+      password: '$aLa1n3n', // made password stronger
     }
 
     await api
@@ -194,7 +194,7 @@ describe('when there is initially one user in db', () => {
     const newUser = {
       username: 'root',
       name: 'Superuser',
-      password: 'salainen',
+      password: '$ala1N3N', // made password stronger
     }
 
     const result = await api
@@ -215,7 +215,7 @@ describe('when there is initially one user in db', () => {
   // that the username only consists of permitted characters,
   // or that the password is strong enough.
   // Implementing these functionalities is left as an optional exercise.
-  // (might be implemented in the future)
+  // (I did that exercise)
 
 })
 
