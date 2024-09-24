@@ -87,6 +87,11 @@ notesRouter.post('/', async (request, response) => {
 
   const user = await User.findById(body.userId)
 
+  // made the failing test pass by using !user instead of user === undefined
+  if (!user) {
+    return response.status(400).json({ error: 'user not found' })
+  }
+
   // define the default value of important as false
   // use Note constructor function
   const note = new Note({

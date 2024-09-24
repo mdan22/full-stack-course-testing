@@ -96,9 +96,14 @@ describe('when there is initially some notes saved', async () => {
     // test adds a new note and verifies that the number of notes returned
     // by the API increases and that the newly added note is in the list
     test('succeeds with valid data', async () => {
+      // added adding userId to the note to make the test pass
+      const users = await helper.usersInDb()
+      const user = users[0]
+
       const newNote = {
         content: 'async/await simplifies making async calls',
-        important: true
+        important: true,
+        userId: user.id
       }
 
       await api
@@ -210,6 +215,7 @@ describe('when there is initially one user in db', () => {
   // that the username only consists of permitted characters,
   // or that the password is strong enough.
   // Implementing these functionalities is left as an optional exercise.
+  // (might be implemented in the future)
 
 })
 
@@ -232,5 +238,5 @@ after(async () => {
 // Note: test-driven development (TDD): tests for new functionality are written
 // before the functionality is implemented
 
-// Note: now some tests will fail. We will leave fixing the tests to a non-compulsory exercise
-// Secondly, in the deployed notes app, the creating a note feature will stop working as user is not yet linked to the frontend
+// Note: now some tests will fail. We will leave fixing the tests to a non-compulsory exercise (I did that exercise)
+// Secondly, in the deployed notes app, the creating a note feature will stop working as user is not yet linked to the frontend (will be done in part 5)
