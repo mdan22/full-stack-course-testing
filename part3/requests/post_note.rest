@@ -1,8 +1,8 @@
 POST http://localhost:3001/api/notes
 Content-Type: application/json
+Authorization: Bearer eyJgbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NmYxN2UzNDNkMmQ4ZTQ5MjNiMDc1OTEiLCJpYXQiOjE3MjcxODU5NjF9.QkTmiXyw2nmf-6Fp84VBCRKEg48RBW55NcV7wjPakeo
 
 {
-    "content": "The existing code and tests need to be changed when user is added to system",
-    "important": true,
-    "userId": "66f17e343d2d8e4923b07591"
+    "content": "Single page apps use token based auth",
+    "important": false
 }

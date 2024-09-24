@@ -35,3 +35,7 @@ loginRouter.post('/', async (request, response) => {
 })
 
 module.exports = loginRouter
+
+// If the application has multiple interfaces requiring identification,
+// JWT's validation should be separated into its own middleware.
+// An existing library like express-jwt could also be used.

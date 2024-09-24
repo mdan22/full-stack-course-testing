@@ -1,5 +1,6 @@
 // notes.js defines the routes for the note list
 
+const jwt = require('jsonwebtoken') // needed to generate the tokens
 const notesRouter = require('express').Router()
 const Note = require('../models/note')
 const User = require('../models/user')
@@ -80,16 +81,30 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
+// extracts the Token from authorization header
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
 // precondition: info about the user who created a note
 // is sent in the userId field of the request body
 notesRouter.post('/', async (request, response) => {
   const body = request.body
-
-  const user = await User.findById(body.userId)
+  // check validity of the token with jws.verify
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+  // if decodedToken.id is undefined, null, etc.
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' }) // unauthorized
+  }
+  const user = await User.findById(decodedToken.id)
 
   // made the failing test pass by using !user instead of user === undefined
   if (!user) {
-    return response.status(400).json({ error: 'user not found' })
+    return response.status(400).json({ error: 'user not found' }) // bad request
   }
 
   // define the default value of important as false
