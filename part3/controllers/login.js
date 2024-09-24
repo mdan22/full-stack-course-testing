@@ -26,7 +26,10 @@ loginRouter.post('/', async (request, response) => {
     id: user.id,
   }
   // the created token contains the username and the user id in a digitally signed form
-  const token = jwt.sign(userForToken, process.env.SECRET)
+  const token = jwt.sign(
+    userForToken, process.env.SECRET,
+    { expiresIn: 60*60 } // set token expiration time to 1h
+  )
 
   response
     .status(200) // ok
@@ -39,3 +42,19 @@ module.exports = loginRouter
 // If the application has multiple interfaces requiring identification,
 // JWT's validation should be separated into its own middleware.
 // An existing library like express-jwt could also be used.
+
+// Note: Problems of Token-based authentication:
+// The shorter the expiration time, the more safe the solution is.
+// But a short expiration time forces a potential pain to a user,
+// one must login to the system more frequently.
+
+// The other solution is to save info about each token to the backend database
+// and to check for each API request if the access rights corresponding to
+// the tokens are still valid. With this scheme, access rights can be revoked at any time.
+// This is called a server-side session.
+
+// The negative aspect of server-side sessions is the increased complexity in the backend
+// and also the effect on performance.
+// That is why it is quite common to save the session corresponding to a token to
+// a key-value database such as Redis, that is limited in functionality compared to
+// e.g. MongoDB or a relational database, but extremely fast in some usage scenarios.
