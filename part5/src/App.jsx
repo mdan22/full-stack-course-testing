@@ -3,12 +3,16 @@ import Note from "./components/Note"
 import Notification from "./components/Notification"
 import Footer from "./components/Footer"
 import noteService from "./services/notes"
+import loginService from "./services/login"
 
 const App = () => {
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null) // set initial value to null
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [user, setUser] = useState(null)
 
   // we use noteService.getAll() instead of axios.get(...)
   useEffect(() => {
@@ -55,7 +59,7 @@ const App = () => {
       .then(returnedNotes => {
       setNotes(notes.map(n => n.id !== id ? n : returnedNotes))
     })
-    .catch(error => {
+    .catch( () => {
       setErrorMessage(
         `Note '${note.content}' was already removed from server`
       )
@@ -68,27 +72,90 @@ const App = () => {
     })
   }
 
+  const handleLogin = async (event) => {
+    event.preventDefault()
+    try {
+      const user = await loginService.login({
+        username, password,
+      })
+    }
+    catch (exception) {
+      setErrorMessage('Wrong credentials')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
+  // outsource the loginForm to a separate component
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username
+          <input
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
+        />
+      </div>
+      <div>
+        password
+          <input
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
+      </div>
+      <button type="submit">login</button>
+    </form>
+  )
+
+  // outsource the noteForm to a separate component
+  const noteForm = () => (
+    <form onSubmit={addNote}>
+      <input
+        value={newNote}
+        onChange={handleNoteChange}
+      />
+      <button type="submit">save</button>
+    </form>
+  )
+
   return (
     <div>
       <h1>Notes</h1>
+      
       <Notification message={errorMessage} />
+
+      {/* We display the login form only if the user is not logged in */}      
+      {user === null ?
+        loginForm() :
+        <div>
+          <p>{user.name} logged-in</p>
+          {noteForm()}
+        </div>
+      }
+
+      <h2>Notes</h2>
+      
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll? 'important' : 'all'}
         </button>
       </div>
+
       <ul>
         {notesToShow.map(note =>
-        <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)}/>
+          <Note
+            key={note.id}
+            note={note}
+            toggleImportance={() => toggleImportanceOf(note.id)}
+          />
       )}
       </ul>
-      <form onSubmit={addNote}>
-        <input
-          value={newNote}
-          onChange={handleNoteChange}
-        />
-        <button type="submit">save</button>
-      </form>
+
       <Footer />
     </div>
   )
@@ -108,3 +175,7 @@ export default App
 // of our application (index.html) and the directory assets.
 // Minified version of our application's JavaScript code will be
 // generated in the dist directory.
+
+// Our main component App is at the moment way too large. The changes we
+// did now are a clear sign that the forms should be refactored into their
+// own components. However, we will leave that for an optional exercise.
