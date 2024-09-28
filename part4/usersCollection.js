@@ -1,4 +1,5 @@
 // not sure if I'll need this in the future it's mostly for taking notes for the course...
+// I actually did part 4 in part 3 directory
 
 // Since users can have many notes, the related ids
 // are stored in an array in the notes field
