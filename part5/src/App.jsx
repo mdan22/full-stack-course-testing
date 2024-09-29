@@ -22,6 +22,28 @@ const App = () => {
         setNotes(initialNotes)
       })
   }, [])
+  useEffect(() =>{
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      noteService.setToken(user.token)
+    }
+  }, [])
+
+  // The empty array as the parameter of the effect ensures that the effect
+  // is executed only when the component is rendered for the first time.
+
+  // Now a user stays logged in to the application forever.
+  // We should probably add a logout functionality,
+  // which removes the login details from the local storage.
+  // We will however leave it as an optional exercise.
+
+  // You can log out with the command:
+  // window.localStorage.removeItem('loggedNoteappUser')
+
+  // or with the command which empties localstorage completely:
+  // window.localStorage.clear()
 
   console.log('render', notes.length, 'notes')
 
@@ -78,6 +100,11 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+      // the details of a logged-in user are now saved to the local storage
+      // and can be viewed in the browser console by typing window.localStorage
+      window.localStorage.setItem(
+        'loggedNoteappUser', JSON.stringify(user)
+      )
       // call the setToken method to set the token
       // of noteService to the current user's token
       noteService.setToken(user.token)
