@@ -78,6 +78,14 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+      // call the setToken method to set the token
+      // of noteService to the current user's token
+      noteService.setToken(user.token)
+      // set user state to the logged in user
+      setUser(user)
+      // reset username + password fields
+      setUsername('')
+      setPassword('')
     }
     catch (exception) {
       setErrorMessage('Wrong credentials')
