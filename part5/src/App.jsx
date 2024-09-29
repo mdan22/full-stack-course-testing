@@ -204,6 +204,8 @@ const App = () => {
 
 export default App
 
+// Frontend production build (3b):
+
 // A production build for applications created with Vite can be created
 // with npm run build.
 // This creates a directory called dist which contains the only HTML file
@@ -211,6 +213,45 @@ export default App
 // Minified version of our application's JavaScript code will be
 // generated in the dist directory.
 
+
+// Login in frontend (5a):
+
 // Our main component App is at the moment way too large. The changes we
 // did now are a clear sign that the forms should be refactored into their
 // own components. However, we will leave that for an optional exercise.
+
+
+// A note on using local storage (5a):
+
+// Saving a token in the local storage might contain a security risk
+// if the application has a security vulnerability that allows
+// Cross Site Scripting (XSS) attacks.
+
+// An XSS attack is possible if the application would allow a user to inject
+// arbitrary JavaScript code (e.g. using a form) that the app would then execute.
+
+// When using React sensibly it should not be possible since React sanitizes
+// all text that it renders, meaning that it is not executing the rendered content
+// as JavaScript.
+
+// If one wants to play safe, the best option is to not store a token in
+// local storage.
+// This might be an option in situations where leaking a token might have
+// tragic consequences.
+
+// It has been suggested that the identity of a signed-in user should be saved
+// as httpOnly cookies, so that JavaScript code could not have any access to the token.
+
+// The drawback of this solution is that it would make implementing SPA applications
+// a bit more complex.
+
+// One would need at least to implement a separate page for logging in.
+
+// However, it is good to notice that even the use of httpOnly cookies
+// does not guarantee anything.
+
+// It has even been suggested that httpOnly cookies are not any safer
+// than the use of local storage.
+
+// So no matter the used solution the most important thing is to minimize
+// the risk of XSS attacks altogether.
