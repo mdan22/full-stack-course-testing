@@ -4,8 +4,11 @@ import Notification from "./components/Notification"
 import Footer from "./components/Footer"
 import noteService from "./services/notes"
 import loginService from "./services/login"
+import LoginForm from "./components/LoginForm"
 
 const App = () => {
+  const [loginVisible, setLoginVisible] = useState(false)
+
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
@@ -24,7 +27,7 @@ const App = () => {
   }, [])
   
   useEffect(() =>{
-    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser')
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
@@ -38,10 +41,10 @@ const App = () => {
   // Now a user stays logged in to the application forever.
   // We should probably add a logout functionality,
   // which removes the login details from the local storage.
-  // We will however leave it as an optional exercise.
+  // We will however leave it as an optional exercise. I did that.
 
   // You can log out with the command:
-  // window.localStorage.removeItem('loggedNoteappUser')
+  // window.localStorage.removeItem('loggedNoteAppUser')
 
   // or with the command which empties localstorage completely:
   // window.localStorage.clear()
@@ -104,7 +107,7 @@ const App = () => {
       // the details of a logged-in user are now saved to the local storage
       // and can be viewed in the browser console by typing window.localStorage
       window.localStorage.setItem(
-        'loggedNoteappUser', JSON.stringify(user)
+        'loggedNoteAppUser', JSON.stringify(user)
       )
       // call the setToken method to set the token
       // of noteService to the current user's token
@@ -123,30 +126,29 @@ const App = () => {
     }
   }
 
-  // outsource the loginForm to a separate component
-  const loginForm = () => (
-    <form onSubmit={handleLogin}>
+// outsource the loginForm to a separate component
+const loginForm = () => {
+    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
+    const showWhenVisible = { display: loginVisible ? '' : 'none' }
+
+    return (
       <div>
-        username
-          <input
-          type="text"
-          value={username}
-          name="Username"
-          onChange={({ target }) => setUsername(target.value)}
-        />
+        <div style={hideWhenVisible}>
+          <button onClick={() => setLoginVisible(true)}>log in</button>
+        </div>
+        <div style={showWhenVisible}>
+          <LoginForm
+            username={username}
+            password={password}
+            handleUsernameChange={({ target }) => setUsername(target.value)}
+            handlePasswordChange={({ target }) => setPassword(target.value)}
+            handleSubmit={handleLogin}
+          />
+          <button onClick={() => setLoginVisible(false)}>cancel</button>
+        </div>
       </div>
-      <div>
-        password
-          <input
-          type="password"
-          value={password}
-          name="Password"
-          onChange={({ target }) => setPassword(target.value)}
-        />
-      </div>
-      <button type="submit">login</button>
-    </form>
-  )
+    )
+  }
 
   // outsource the noteForm to a separate component
   const noteForm = () => (
@@ -159,22 +161,39 @@ const App = () => {
     </form>
   )
 
+  // outsource logout form
+  // added it for convenience
+  // simple - it's just a logout button
+  const logoutForm = () => (
+    <button onClick={handleLogout}>logout</button>
+  )
+
+  // logout event handler
+  // handler sets user and token to null and
+  // removes local storage data of user in browser
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    
+    window.localStorage.removeItem('loggedNoteAppUser')
+
+    noteService.setToken(null)
+    setUser(null)
+  }
+
   return (
     <div>
       <h1>Notes</h1>
       
       <Notification message={errorMessage} />
 
-      {/* We display the login form only if the user is not logged in */}      
+      {/* render login or (logout + note form) conditionally */}      
       {user === null ?
         loginForm() :
         <div>
-          <p>{user.name} logged-in</p>
+          <p>{user.name} logged-in{logoutForm()}</p>
           {noteForm()}
         </div>
       }
-
-      <h2>Notes</h2>
       
       <div>
         <button onClick={() => setShowAll(!showAll)}>

@@ -9,6 +9,14 @@ loginRouter.post('/', async (request, response) => {
   const { username, password } = request.body // destructuring
 
   const user = await User.findOne({ username }) // check if username exists in db
+
+  // add try catch block for convenience
+  try {
+    await bcrypt.compare(password, user.passwordHash)
+  } catch (error) {
+    console.log('error:',error)
+  }
+
   const passwordCorrect = user === null
     ? false
     : await bcrypt.compare(password, user.passwordHash) // check if password is correct
