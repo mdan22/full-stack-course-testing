@@ -5,10 +5,10 @@ import Footer from "./components/Footer"
 import noteService from "./services/notes"
 import loginService from "./services/login"
 import LoginForm from "./components/LoginForm"
+import Togglable from "./components/Togglable"
+import NoteForm from "./NoteForm"
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
-
   const [notes, setNotes] = useState([])
   const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
@@ -128,38 +128,19 @@ const App = () => {
 
 // outsource the loginForm to a separate component
 const loginForm = () => {
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
     return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
+      // LoginForm is now a child component of Togglable
+      <Togglable buttonLabel='login' >
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
     )
   }
-
-  // outsource the noteForm to a separate component
-  const noteForm = () => (
-    <form onSubmit={addNote}>
-      <input
-        value={newNote}
-        onChange={handleNoteChange}
-      />
-      <button type="submit">save</button>
-    </form>
-  )
 
   // outsource logout form
   // added it for convenience
@@ -187,12 +168,18 @@ const loginForm = () => {
       <Notification message={errorMessage} />
 
       {/* render login or (logout + note form) conditionally */}      
-      {user === null ?
-        loginForm() :
-        <div>
-          <p>{user.name} logged-in{logoutForm()}</p>
-          {noteForm()}
-        </div>
+      {user === null
+        ? loginForm()
+        : <div>
+            <p>{user.name} logged-in{logoutForm()}</p>
+            <Togglable buttonLabel={'new Note'}>
+              <NoteForm
+                onSubmit={addNote}
+                handleChange={handleNoteChange}
+                value={newNote}
+              />
+            </Togglable>
+          </div>
       }
       
       <div>
