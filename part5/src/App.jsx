@@ -10,7 +10,6 @@ import NoteForm from "./NoteForm"
 
 const App = () => {
   const [notes, setNotes] = useState([])
-  const [newNote, setNewNote] = useState('') // newNote state reflects the current value of the input
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null) // set initial value to null
   const [username, setUsername] = useState('')
@@ -52,25 +51,12 @@ const App = () => {
   console.log('render', notes.length, 'notes')
 
   // we use noteService.create(...) instead of axios.post(...)
-  const addNote = (event) => {
-    event.preventDefault()
-    console.log('button clicked', event.target);
-    const noteObject = {
-      content: newNote,
-      important: Math.random() < 0.5,
-      id: notes.length + 1,
-      // I let the ids still be generated here bc it doesnt work properly otherwise
-    }
-    noteService.create(noteObject)
-      .then(returnedNotes => {
-        setNotes(notes.concat(returnedNotes))
-        setNewNote('') 
+  const addNote = (noteObject) => {
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
       })
-  }
-
-  const handleNoteChange = (event) => {
-    console.log(event.target.value)
-    setNewNote(event.target.value)
   }
 
   const notesToShow = showAll
@@ -173,11 +159,7 @@ const loginForm = () => {
         : <div>
             <p>{user.name} logged-in{logoutForm()}</p>
             <Togglable buttonLabel={'new Note'}>
-              <NoteForm
-                onSubmit={addNote}
-                handleChange={handleNoteChange}
-                value={newNote}
-              />
+              <NoteForm createNote={addNote}/>
             </Togglable>
           </div>
       }
@@ -203,62 +185,4 @@ const loginForm = () => {
   )
 }
 
-// We have added the addNote function as
-// an event handler to the form element
-// that will be called when the form is
-// submitted, by clicking the submit
-// button.
-
 export default App
-
-// Frontend production build (3b):
-
-// A production build for applications created with Vite can be created
-// with npm run build.
-// This creates a directory called dist which contains the only HTML file
-// of our application (index.html) and the directory assets.
-// Minified version of our application's JavaScript code will be
-// generated in the dist directory.
-
-
-// Login in frontend (5a):
-
-// Our main component App is at the moment way too large. The changes we
-// did now are a clear sign that the forms should be refactored into their
-// own components. However, we will leave that for an optional exercise.
-
-
-// A note on using local storage (5a):
-
-// Saving a token in the local storage might contain a security risk
-// if the application has a security vulnerability that allows
-// Cross Site Scripting (XSS) attacks.
-
-// An XSS attack is possible if the application would allow a user to inject
-// arbitrary JavaScript code (e.g. using a form) that the app would then execute.
-
-// When using React sensibly it should not be possible since React sanitizes
-// all text that it renders, meaning that it is not executing the rendered content
-// as JavaScript.
-
-// If one wants to play safe, the best option is to not store a token in
-// local storage.
-// This might be an option in situations where leaking a token might have
-// tragic consequences.
-
-// It has been suggested that the identity of a signed-in user should be saved
-// as httpOnly cookies, so that JavaScript code could not have any access to the token.
-
-// The drawback of this solution is that it would make implementing SPA applications
-// a bit more complex.
-
-// One would need at least to implement a separate page for logging in.
-
-// However, it is good to notice that even the use of httpOnly cookies
-// does not guarantee anything.
-
-// It has even been suggested that httpOnly cookies are not any safer
-// than the use of local storage.
-
-// So no matter the used solution the most important thing is to minimize
-// the risk of XSS attacks altogether.
