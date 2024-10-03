@@ -144,6 +144,10 @@ const App = () => {
     </Togglable>
   )
 
+  const togglable1 = useRef()
+  const togglable2 = useRef()
+  const togglable3 = useRef()
+
 
   return (
     <div>
@@ -180,6 +184,31 @@ const App = () => {
           />
       )}
       </ul>
+
+      {/* WILL REMOVE THIS SOON LOL */}
+      <div>
+        We create three separate instances of the component
+        that all have their separate state:
+        
+        <Togglable buttonLabel="1" ref={togglable1}>
+          {/* We can put a handler here
+          which can access the toggle component
+          through the togglable1 reference */}
+          first
+        </Togglable>
+
+        <Togglable buttonLabel="2" ref={togglable2}>
+          second
+        </Togglable>
+
+        <Togglable buttonLabel="3" ref={togglable3}>
+          third
+        </Togglable>
+
+        The ref attribute is used for assigning a reference
+        to each of the components in the variables
+        togglable1, togglable2 and togglable3.
+      </div>
 
       <Footer />
     </div>
