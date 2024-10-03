@@ -1,20 +1,33 @@
-const LoginForm = ({
-  handleSubmit,
-  handleUsernameChange,
-  handlePasswordChange,
-  username,
-  password
- }) => {
+// We could move the states (username + password) related to the loginForm into its own component, but we'll leave that for an optional exercise.
+// Plan on doing that.
+
+import { useState } from "react"
+
+const LoginForm = ({ handleLogin }) => {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  // when login form is submitted, the handleLogin fct is called
+  const onSubmit = async (event) => {
+    event.preventDefault()
+    const success = await handleLogin(username, password)
+    // we reset the fields if login was successful
+    if (success) {
+      setUsername('')
+      setPassword('')
+    }
+  }
+
  return (
    <div>
      <h2>Login</h2>
 
-     <form onSubmit={handleSubmit}>
+     <form onSubmit={onSubmit}>
        <div>
          username
          <input
            value={username}
-           onChange={handleUsernameChange}
+           onChange={({ target }) => setUsername(target.value)}
          />
        </div>
        <div>
@@ -22,7 +35,7 @@ const LoginForm = ({
          <input
            type="password"
            value={password}
-           onChange={handlePasswordChange}
+           onChange={({ target }) => setPassword(target.value)}
          />
      </div>
        <button type="submit">login</button>

@@ -12,8 +12,6 @@ const App = () => {
   const [notes, setNotes] = useState([])
   const [showAll, setShowAll] = useState(true)
   const [errorMessage, setErrorMessage] = useState(null) // set initial value to null
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
   // we use noteService.getAll() instead of axios.get(...)
@@ -84,8 +82,9 @@ const App = () => {
     })
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
+  // we leave handleLogin in App.jsx since handleLogin
+  // needs to access the errormessage and user state
+  const handleLogin = async (username, password) => {
     try {
       const user = await loginService.login({
         username, password,
@@ -101,31 +100,15 @@ const App = () => {
       // set user state to the logged in user
       setUser(user)
       // reset username + password fields
-      setUsername('')
-      setPassword('')
+      return true // login successful
     }
     catch (exception) {
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
+      return false // login failed
     }
-  }
-
-// outsource the loginForm to a separate component
-const loginForm = () => {
-    return (
-      // LoginForm is now a child component of Togglable
-      <Togglable buttonLabel='login' >
-        <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
-        />
-      </Togglable>
-    )
   }
 
   // outsource logout form
@@ -155,7 +138,12 @@ const loginForm = () => {
 
       {/* render login or (logout + note form) conditionally */}      
       {user === null
-        ? loginForm()
+        ? <div>
+            <Togglable buttonLabel={'login'}>
+              {/* handleLogin function is passed to the Loginform component */}
+              <LoginForm handleLogin={handleLogin}/>
+            </Togglable>
+          </div>
         : <div>
             <p>{user.name} logged-in{logoutForm()}</p>
             <Togglable buttonLabel={'new Note'}>
@@ -184,5 +172,6 @@ const loginForm = () => {
     </div>
   )
 }
+
 
 export default App
