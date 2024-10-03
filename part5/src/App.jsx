@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Note from "./components/Note"
 import Notification from "./components/Notification"
 import Footer from "./components/Footer"
@@ -50,6 +50,8 @@ const App = () => {
 
   // we use noteService.create(...) instead of axios.post(...)
   const addNote = (noteObject) => {
+    // call fct from Toggle component to toggle visibility of NoteForm
+    noteFormRef.current.toggleVisibility()
     noteService
       .create(noteObject)
       .then(returnedNote => {
@@ -130,6 +132,19 @@ const App = () => {
     setUser(null)
   }
 
+  // define a ref for noteForm and use it in the HTML to be rendered
+  // we could even define other ref that uses the useImperativeHandle hook
+  // to hide things in specific situations
+  // there are also other use cases for refs than accessing React components:
+  // https://react.dev/learn/manipulating-the-dom-with-refs
+  const noteFormRef = useRef()
+  const noteForm = () => (
+    <Togglable buttonLabel={'new Note'} ref={noteFormRef}>
+      <NoteForm createNote={addNote}/>
+    </Togglable>
+  )
+
+
   return (
     <div>
       <h1>Notes</h1>
@@ -146,9 +161,7 @@ const App = () => {
           </div>
         : <div>
             <p>{user.name} logged-in{logoutForm()}</p>
-            <Togglable buttonLabel={'new Note'}>
-              <NoteForm createNote={addNote}/>
-            </Togglable>
+            {noteForm()}
           </div>
       }
       
