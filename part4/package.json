@@ -9,7 +9,7 @@
     "test": "cross-env  NODE_ENV=test node --test",
     "build:ui": "rm -rf dist && cd ../part5 && npm run build && cp -r dist ../part4",
     "deploy": "npm run build:ui && npm run dev",
-    "deploy:render": "cd ../part5 && npm install && npm run build && cd ../part4 && npm run dev",
+    "deploy:render": "cd ../part5 && npm install && npm run build && cp -r dist ../part4/dist && cd ../part4 && npm install",
     "deploy:full": "npm run build:ui && git add -A && git commit -m uibuild && git push origin main",
     "lint": "eslint ."
   },
