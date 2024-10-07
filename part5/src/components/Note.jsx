@@ -4,7 +4,9 @@ const Note = ({ note, toggleImportance }) => {
 
   return (
     // in React we need to use className instead of class
-    <li className="note">
+    // by using the className attribute,
+    // the component can be accessed in tests
+    <li className='note'>
       {note.content} <button onClick={toggleImportance}>{label}</button>
     </li>
   )
