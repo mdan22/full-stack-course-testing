@@ -14,6 +14,7 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
+    // bc of this we don't need to import keywords like describe, test and expect into tests
     globals: true,
     setupFiles: './testSetup',
   }
