@@ -52,6 +52,7 @@ const App = () => {
   const addNote = (noteObject) => {
     // call fct from Toggle component to toggle visibility of NoteForm
     noteFormRef.current.toggleVisibility()
+
     noteService
       .create(noteObject)
       .then(returnedNote => {
@@ -84,6 +85,9 @@ const App = () => {
     })
   }
 
+  // handler for login
+  // replaced event with username, password
+  // so it works with extracted loginForm
   // we leave handleLogin in App.jsx since handleLogin
   // needs to access the errormessage and user state
   const handleLogin = async (username, password) => {
@@ -101,7 +105,7 @@ const App = () => {
       noteService.setToken(user.token)
       // set user state to the logged in user
       setUser(user)
-      // reset username + password fields
+      // username + password fields are reset in LoginForm component
       return true // login successful
     }
     catch (exception) {
@@ -148,19 +152,26 @@ const App = () => {
   const togglable2 = useRef()
   const togglable3 = useRef()
 
-
   return (
     <div>
       <h1>Notes</h1>
       
       <Notification message={errorMessage} />
 
+      {/*
+        The app works but a button is rendered that has no label text.
+        Expected and required props of a component can be defined with the prop types packeage.
+      */}
+
+      {/* <Togglable > buttonLabel forgotten... </Togglable> */}
+      {/* <Togglable buttonLabel={'buttonLabel not forgotten'} > This is hidden lol </Togglable> */}
+
       {/* render login or (logout + note form) conditionally */}      
       {user === null
         ? <div>
             <Togglable buttonLabel={'login'}>
-              {/* handleLogin function is passed to the Loginform component */}
-              <LoginForm handleLogin={handleLogin}/>
+              {/* handleLogin function is passed to the component */}
+              <LoginForm handleSubmit={handleLogin}/>
             </Togglable>
           </div>
         : <div>

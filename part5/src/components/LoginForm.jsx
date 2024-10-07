@@ -1,16 +1,18 @@
-// We could move the states (username + password) related to the loginForm into its own component, but we'll leave that for an optional exercise.
-// Plan on doing that.
+// moved the states (username + password) related to the
+// loginForm into its own component
+// even though it wasn't required (it was an optional exercise)
 
 import { useState } from "react"
+import PropTypes from "prop-types"
 
-const LoginForm = ({ handleLogin }) => {
+const LoginForm = ({ handleSubmit }) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
-  // when login form is submitted, the handleLogin fct is called
+  // when login form is submitted, the handleSubmit fct is called
   const onSubmit = async (event) => {
     event.preventDefault()
-    const success = await handleLogin(username, password)
+    const success = await handleSubmit(username, password)
     // we reset the fields if login was successful
     if (success) {
       setUsername('')
@@ -42,6 +44,10 @@ const LoginForm = ({ handleLogin }) => {
      </form>
    </div>
  )
+}
+
+LoginForm.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
 }
 
 export default LoginForm

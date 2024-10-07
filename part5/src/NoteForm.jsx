@@ -6,11 +6,15 @@ const NoteForm = ({createNote}) => {
   
   const addNote = (event) => {
     event.preventDefault()
+
     console.log('button clicked', event.target);
+    
     createNote({
       content: newNote,
       important: true, // this was changed to always be true
     })
+    // resetting the note field is probably needed here?
+    setNewNote('')
   }
 
   return (
