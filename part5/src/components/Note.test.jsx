@@ -12,11 +12,18 @@ test('renders content', () => {
   // render the component with render()
   render(<Note note={note}/>)
 
+  // we can use method screen.debug() to print
+  // the HTML of a component to the terminal
+  screen.debug()
+
   // #1
   // search for an element that has the note content
   // test fails if .getByText does not find the element
   // we wouldn't even need expect to test this
   const element = screen.getByText('Component testing is done with react-testing-library')
+
+  // we can also print a wanted element to console
+  screen.debug(element)
 
   // and ensure that the element exists
   // expect generates an assertion for its arguments
