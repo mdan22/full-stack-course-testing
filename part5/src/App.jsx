@@ -1,12 +1,12 @@
-import { useState, useEffect, useRef } from "react"
-import Note from "./components/Note"
-import Notification from "./components/Notification"
-import Footer from "./components/Footer"
-import noteService from "./services/notes"
-import loginService from "./services/login"
-import LoginForm from "./components/LoginForm"
-import Togglable from "./components/Togglable"
-import NoteForm from "./NoteForm"
+import { useState, useEffect, useRef } from 'react'
+import Note from './components/Note'
+import Notification from './components/Notification'
+import Footer from './components/Footer'
+import noteService from './services/notes'
+import loginService from './services/login'
+import LoginForm from './components/LoginForm'
+import Togglable from './components/Togglable'
+import NoteForm from './NoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([])
@@ -22,8 +22,8 @@ const App = () => {
         setNotes(initialNotes)
       })
   }, [])
-  
-  useEffect(() =>{
+
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedNoteAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
@@ -67,22 +67,22 @@ const App = () => {
   const toggleImportanceOf = (id) => {
     console.log(`importance of ${id} is being toggled`) // template string syntax
     const note = notes.find(note => note.id === id)
-    const changedNote = { ...note, important: !note.important} // object spread syntax
+    const changedNote = { ...note, important: !note.important } // object spread syntax
     noteService.update(id, changedNote)
       .then(returnedNotes => {
-      setNotes(notes.map(n => n.id !== id ? n : returnedNotes))
-    })
-    .catch( () => {
-      setErrorMessage(
-        `Note '${note.content}' was already removed from server`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-      // filter returns a new array comprising only the items from the
-      // list for which the function "n.id !== id" returns true for
-      setNotes(notes.filter(n => n.id !== id))
-    })
+        setNotes(notes.map(n => n.id !== id ? n : returnedNotes))
+      })
+      .catch( () => {
+        setErrorMessage(
+          `Note '${note.content}' was already removed from server`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        // filter returns a new array comprising only the items from the
+        // list for which the function "n.id !== id" returns true for
+        setNotes(notes.filter(n => n.id !== id))
+      })
   }
 
   // handler for login
@@ -129,7 +129,7 @@ const App = () => {
   // removes local storage data of user in browser
   const handleLogout = async (event) => {
     event.preventDefault()
-    
+
     window.localStorage.removeItem('loggedNoteAppUser')
 
     noteService.setToken(null)
@@ -155,7 +155,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
-      
+
       <Notification message={errorMessage} />
 
       {/*
@@ -166,20 +166,20 @@ const App = () => {
       {/* <Togglable > buttonLabel forgotten... </Togglable> */}
       {/* <Togglable buttonLabel={'buttonLabel not forgotten'} > This is hidden lol </Togglable> */}
 
-      {/* render login or (logout + note form) conditionally */}      
+      {/* render login or (logout + note form) conditionally */}
       {user === null
         ? <div>
-            <Togglable buttonLabel={'login'}>
-              {/* handleLogin function is passed to the component */}
-              <LoginForm handleSubmit={handleLogin}/>
-            </Togglable>
-          </div>
+          <Togglable buttonLabel={'login'}>
+            {/* handleLogin function is passed to the component */}
+            <LoginForm handleSubmit={handleLogin}/>
+          </Togglable>
+        </div>
         : <div>
-            <p>{user.name} logged-in{logoutForm()}</p>
-            {noteForm()}
-          </div>
+          <p>{user.name} logged-in{logoutForm()}</p>
+          {noteForm()}
+        </div>
       }
-      
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll? 'important' : 'all'}
@@ -193,14 +193,14 @@ const App = () => {
             note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}
           />
-      )}
+        )}
       </ul>
 
       {/* WILL REMOVE THIS SOON LOL */}
       <div>
         We create three separate instances of the component
         that all have their separate state:
-        
+
         <Togglable buttonLabel="1" ref={togglable1}>
           {/* We can put a handler here
           which can access the toggle component

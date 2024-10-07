@@ -2,8 +2,8 @@
 // loginForm into its own component
 // even though it wasn't required (it was an optional exercise)
 
-import { useState } from "react"
-import PropTypes from "prop-types"
+import { useState } from 'react'
+import PropTypes from 'prop-types'
 
 const LoginForm = ({ handleSubmit }) => {
   const [username, setUsername] = useState('')
@@ -20,30 +20,30 @@ const LoginForm = ({ handleSubmit }) => {
     }
   }
 
- return (
-   <div>
-     <h2>Login</h2>
+  return (
+    <div>
+      <h2>Login</h2>
 
-     <form onSubmit={onSubmit}>
-       <div>
+      <form onSubmit={onSubmit}>
+        <div>
          username
-         <input
-           value={username}
-           onChange={({ target }) => setUsername(target.value)}
-         />
-       </div>
-       <div>
+          <input
+            value={username}
+            onChange={({ target }) => setUsername(target.value)}
+          />
+        </div>
+        <div>
          password
-         <input
-           type="password"
-           value={password}
-           onChange={({ target }) => setPassword(target.value)}
-         />
-     </div>
-       <button type="submit">login</button>
-     </form>
-   </div>
- )
+          <input
+            type="password"
+            value={password}
+            onChange={({ target }) => setPassword(target.value)}
+          />
+        </div>
+        <button type="submit">login</button>
+      </form>
+    </div>
+  )
 }
 
 LoginForm.propTypes = {

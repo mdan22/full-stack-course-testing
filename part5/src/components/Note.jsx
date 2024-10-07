@@ -1,7 +1,7 @@
-const Note = ({note, toggleImportance}) => {
+const Note = ({ note, toggleImportance }) => {
   const label = note.important
     ? 'make not important' : 'make important'
-    
+
   return (
     // in React we need to use className instead of class
     <li className="note">
@@ -9,7 +9,7 @@ const Note = ({note, toggleImportance}) => {
     </li>
   )
 }
-  
+
 // The last line of the module exports the declared module,
 // the variable Note.
 
