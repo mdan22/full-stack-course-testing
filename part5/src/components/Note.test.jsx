@@ -132,3 +132,8 @@ test('does not render this', () => {
   const element = screen.queryByText('do not want this thing to be rendered')
   expect(element).toBeNull()
 })
+
+// test coverage can easily be checked with cmd:
+// npm test -- --coverage
+// and it generates a coverage report in the coverage directory
+// but apparently all tests must pass for coverage to be checked

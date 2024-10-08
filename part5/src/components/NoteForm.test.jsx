@@ -11,7 +11,7 @@ test('<NoteForm /> updates parent state and calls onSubmit', async () => {
 
   render(<NoteForm createNote={createNote} />)
 
-  // this test doesn't pass anymore because there are multiple input fields
+  // this test doesn't pass if there are multiple input fields
   // use getByRole() to access input field
   const input = screen.getByRole('textbox')
   // use getByText to find button

@@ -7,7 +7,7 @@ const Note = ({ note, toggleImportance }) => {
     // by using the className attribute,
     // the component can be accessed in tests
     <li data-testid='42' className='note'>
-      Your awesome note: {note.content}
+      {note.content}
       <button onClick={toggleImportance}>{label}</button>
     </li>
   )
