@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import Note from './Note'
-import { expect } from 'vitest'
 
 // test if content is rendered correctly
 test('renders content', () => {
@@ -52,4 +52,30 @@ test('renders content', () => {
   const foundByTestId = screen.findByTestId('42')
 
   expect(foundByTestId).toBeDefined()
+})
+
+test('clicking the button calls event handler once', async () => {
+  const note ={
+    content: 'Component testing is done with react-testing library',
+    important: true
+  }
+
+  // the event handler is a mock function defined with vitest
+  const mockHandler = vi.fn()
+
+  render(
+    <Note note={note} toggleImportance={mockHandler}/>
+  )
+
+  // a session is started to interact with rendered components
+  const user = userEvent.setup()
+
+  // find button element that contains text 'make not important'
+  const button = screen.getByText('make not important')
+
+  // click that element
+  await user.click(button)
+
+  // expect that the mock function has been called exactly once
+  expect(mockHandler.mock.calls).toHaveLength(1)
 })
