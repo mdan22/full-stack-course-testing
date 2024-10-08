@@ -6,7 +6,7 @@ import noteService from './services/notes'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
-import NoteForm from './NoteForm'
+import NoteForm from './components/NoteForm'
 
 const App = () => {
   const [notes, setNotes] = useState([])
