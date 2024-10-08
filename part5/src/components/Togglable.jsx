@@ -29,7 +29,8 @@ const Togglable = forwardRef((props, ref) => {
       <div style={hideWhenVisible}>
         <button onClick={() => toggleVisibility()}>{props.buttonLabel}</button>
       </div>
-      <div style={showWhenVisible}>
+      // added tpgglableContent CSS to div that retutns child components
+      <div style={showWhenVisible} className='togglableContent'>
         {/* props.children is automatically added by React and always exists */}
         {props.children}
         <button onClick={() => toggleVisibility()}>cancel</button>
