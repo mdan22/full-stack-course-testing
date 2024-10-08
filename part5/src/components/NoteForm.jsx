@@ -6,7 +6,6 @@ const NoteForm = ({ createNote }) => {
 
   const handleChange = (event) => {
     setNewNote(event.target.value)
-    console.log(event.target.value)
   }
 
   // addNote handler is called when form is submited.
@@ -35,6 +34,14 @@ const NoteForm = ({ createNote }) => {
         <input
           value={newNote}
           onChange={handleChange}
+          placeholder='write note content here'
+          id='note-input'
+        />
+        <input
+          value={'...'}
+          onChange={() => {
+            console.log('test')
+          }}
         />
         <button type="submit">save</button>
       </form>

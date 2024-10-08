@@ -79,3 +79,56 @@ test('clicking the button calls event handler once', async () => {
   // expect that the mock function has been called exactly once
   expect(mockHandler.mock.calls).toHaveLength(1)
 })
+
+// test if test fails when trying to find text element
+test('modified #1: renders content', () => {
+  const note = {
+    content: 'Does not work anymore :(',
+    important: true
+  }
+
+  // render the component with render()
+  render(<Note note={note}/>)
+
+  // if we add text in the Note implementation like this:
+  // Your awesome note: {note.content}
+  // the getByText method no longer finds the element
+  const element = screen.getByText('Does not work anymore :(')
+
+  expect(element).toBeDefined()
+})
+
+// test if test passes when using getByText with parameter
+// { exact: false } to find text element
+test('modified #2: renders content', () => {
+  const note = {
+    content: 'Does not work anymore :(',
+    important: true
+  }
+
+  // render the component with render()
+  render(<Note note={note}/>)
+
+  // if we add text in the Note implementation like this:
+  // Your awesome note: {note.content}
+  // we need to add {exact: false} flag so the getByText still finds the element
+  const element = screen.getByText('Does not work anymore :(', { exact: false })
+
+  expect(element).toBeDefined()
+})
+
+// note: unlike other ByText methods, getByText returns a promise!
+
+// we can use queryByText() method to ensure that something is not rendered to the component
+test('does not render this', () => {
+  const note = {
+    content: 'This is a reminder',
+    important: true
+  }
+
+  render(<Note note={note} />)
+
+  // the queryByText method returns the element but does not cause an exception if not found
+  const element = screen.queryByText('do not want this thing to be rendered')
+  expect(element).toBeNull()
+})
