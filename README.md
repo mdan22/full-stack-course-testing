@@ -50,3 +50,9 @@ Full stack development is extremely hard, that is why I will use all the possibl
 - for frontend we only wrote unit tests (they ensure correct functionality of an individual component)
 - integration testing could be done here too but is considerably more difficult than unit testing
 - end-to-end tests (which test the whole app) will be done in the last chapter of Part 5
+
+#### Snapshot testing
+
+- [snapshot testing](https://vitest.dev/guide/snapshot) is an alternate way of testing
+- compares the HTML code defined by the component after it has changed to the HTML code that existed before it was changed
+- the dev is asked to confirm if the changes are desired (new functionality) or undesired (bug)
