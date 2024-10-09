@@ -36,3 +36,17 @@ Full stack development is extremely hard, that is why I will use all the possibl
 - If my code does not work, I will not write more code. Instead, I'll start deleting it until it works or will just return to a state where everything was still working
 - If a test does not pass, I'll make sure that the tested functionality works properly in the application
 - When I ask for help in the course Discord channel or elsewhere I formulate my questions properly, see [here](https://fullstackopen.com/en/part0/general_info#how-to-ask-help-in-discord) how to ask for help
+
+# Notes
+
+## Part 5
+
+### C - Testing React Apps
+
+#### Frontend integration tests
+
+- for backend we wrote integration tests in Part 4
+- we intentionally did not write unit tests for simplicity
+- for frontend we only wrote unit tests (they ensure correct functionality of an individual component)
+- integration testing could be done here too but is considerably more difficult than unit testing
+- end-to-end tests (which test the whole app) will be done in the last chapter of Part 5
