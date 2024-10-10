@@ -56,3 +56,12 @@ Full stack development is extremely hard, that is why I will use all the possibl
 - [snapshot testing](https://vitest.dev/guide/snapshot) is an alternate way of testing
 - compares the HTML code defined by the component after it has changed to the HTML code that existed before it was changed
 - the dev is asked to confirm if the changes are desired (new functionality) or undesired (bug)
+
+### D - End to end testing: Playwright
+
+- End to End (E2E) tests are a way to test a system as a whole
+- only a browser and a testing library are needed
+- potentially the most useful category of tests because they test the system through the same ui as real users use
+- configuring E2E tests is more challenging than unit or integration tests
+- recommended libraries: [Cypress](https://www.cypress.io/) and [Playwright](https://playwright.dev/)
+- Playwright is now the preferred E2E library for the course
