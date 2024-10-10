@@ -143,7 +143,7 @@ const App = () => {
   // https://react.dev/learn/manipulating-the-dom-with-refs
   const noteFormRef = useRef()
   const noteForm = () => (
-    <Togglable buttonLabel={'new Note'} ref={noteFormRef}>
+    <Togglable buttonLabel={'new note'} ref={noteFormRef}>
       <NoteForm createNote={addNote}/>
     </Togglable>
   )
