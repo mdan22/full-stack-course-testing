@@ -169,7 +169,7 @@ const App = () => {
       {/* render login or (logout + note form) conditionally */}
       {user === null
         ? <div>
-          <Togglable buttonLabel={'login'}>
+          <Togglable buttonLabel={'log in'}>
             {/* handleLogin function is passed to the component */}
             <LoginForm handleSubmit={handleLogin}/>
           </Togglable>
