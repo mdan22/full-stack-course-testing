@@ -84,7 +84,33 @@ describe('Note app', () => {
         await expect(await page.getByText('make important')).toBeVisible()
       })
   })
+  })
 
+  test('login fails with wrong password', async ({ page }) => {
+    // user toggles LoginForm using login button
+    await page.getByRole('button', {name: 'log in'}).click()
+
+    // form fields are found by their testid
+    // and are filled with valid username but wrong password by user
+    await page.getByTestId('username').fill('mluukkai')
+    await page.getByTestId('password').fill('wrong')
+    await page.getByRole('button', {name: 'log in'}).click()
+
+    // failed login expected
+    // find element by the specififc className
+    const errorDiv = await page.locator('.error')
+    // and expect it to contain the specific error text 'wrong credentials'
+    await expect(errorDiv).toContainText('wrong credentials')
+    // as well as borderstyle: 'solid'
+    await expect(errorDiv).toHaveCSS('border-style', 'solid')
+    // and color: 'rgb(255, 0, 0)'
+    // colors must be defined as rgb codes in Playwright
+    await expect(errorDiv).toHaveCSS('color', 'rgb(255, 0, 0)')
+
+    // expect the phrase 'Matti Luukkainen logged in'
+    // (which would imply a successful login)
+    // not to be rendered
+    await expect(await page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
 
   })
 })
