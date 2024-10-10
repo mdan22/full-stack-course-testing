@@ -17,13 +17,44 @@ describe('Note app', () => {
     await expect(page.getByText('Note app, Department of Computer Science, University of Helsinki 2024')).toBeVisible()
   })
 
-  test('login form can be opened', async ({ page }) => {
+  test('user can log in', async ({ page }) => {
+    // user toggles LoginForm using login button
     await page.getByRole('button', {name: 'login'}).click()
 
+    // form fields are found by their testid
+    // and are filled with valid user credentials by user
     await page.getByTestId('username').fill('mluukkai')
     await page.getByTestId('password').fill('$aLa1Nen')
     await page.getByRole('button', {name: 'login'}).click()
 
+    // successful login expected
     await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
   })
+
+  // we need to log in (again) before each of the following tests
+  // because all changes made to the browser's state by the previous
+  // tests are reset
+  describe('when logged in', () => {
+    beforeEach(async ({ page }) => {
+      // all tests in this block are testing
+      // when user mluukkai is logged in
+      await page.getByRole('button', {name: 'login'}).click()
+      await page.getByTestId('username').fill('mluukkai')
+      await page.getByTestId('password').fill('$aLa1Nen')
+      await page.getByRole('button', {name: 'login'}).click()
+    })
+    
+    test('a new note can be created', async ({ page }) => {
+      // user clickes new note button which toggles NoteForm
+      await page.getByRole('button', {name: 'new note'}).click()
+
+      // the newnote field is filled with a note and save button is clicked
+      await page.getByTestId('newnote').fill('a note created by playwright')
+      await page.getByRole('button', {name: 'save'}).click()
+
+      // the saved note is then expected to be among the listed notes
+      await expect(page.getByText('a note created by playwright')).toBeVisible()
+    })
+  })
+
 })
