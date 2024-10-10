@@ -64,4 +64,11 @@ Full stack development is extremely hard, that is why I will use all the possibl
 - potentially the most useful category of tests because they test the system through the same ui as real users use
 - configuring E2E tests is more challenging than unit or integration tests
 - recommended libraries: [Cypress](https://www.cypress.io/) and [Playwright](https://playwright.dev/)
+- statistics on [npmtrends.com](https://npmtrends.com/cypress-vs-playwright) show that Playwright has become more popular lately
 - Playwright is now the preferred E2E library for the course
+
+#### Playwright
+
+- Playwright is roughly on a par with Cypress in terms of ease of use
+- Playwright's tests are executed in the Node process, which is connected to the browser via programming interfaces
+- One advantage of Playwright is its browser support: it supports Chrome, Firefox and Webkit-based browsers like Safari
