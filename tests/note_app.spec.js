@@ -83,7 +83,7 @@ describe('Note app', () => {
         // then it is expected that an element labeled 'make important' is visible
         await expect(await page.getByText('make important')).toBeVisible()
       })
-  })
+    })
   })
 
   test('login fails with wrong password', async ({ page }) => {
@@ -111,6 +111,23 @@ describe('Note app', () => {
     // (which would imply a successful login)
     // not to be rendered
     await expect(await page.getByText('Matti Luukkainen logged in')).not.toBeVisible()
-
   })
+
+  // uncomment to see how .only works
+  // describe(() => {
+  //   // this is the only test executed!
+  //   // useful if test is still being implemented and breaks a lot
+  //   // once the test is ready / it passes, only can and should be deleted
+  //   // Another option is running a test by specifying it in the command line:
+  //   // npm test -- -g "login fails with wrong password"
+  //   test.only('login fails with wrong password', async ({ page }) => {
+  //     // ...
+  //   })
+
+  //   // example test that does not get executed (need to remove it later!!!)
+  //   // this test is skipped...
+  //   test('user can login with correct credentials', async ({ page }) => {
+  //     // ...
+  //   })
+  // })
 })
