@@ -1,12 +1,13 @@
 // first test file for e2e testing of our own application 
 const { test, expect, describe, beforeEach } = require('@playwright/test')
+const { loginWith, createNote } = require('./helper')
 
 describe('Note app', () => {
   beforeEach(async ({ page, request }) => {
     // empty db and post user before each test
     // by making HTTP requests with request.post to the backend
-    await request.post('http://localhost:3001/api/testing/reset')
-    await request.post('http://localhost:3001/api/users', {
+    await request.post('/api/testing/reset')
+    await request.post('/api/users', {
       data: {
         name: 'Matti Luukkainen',
         username: 'mluukkai',
@@ -15,8 +16,9 @@ describe('Note app', () => {
     })
 
     // all tests in this block are testing
-    // the page at http://localhost:5173/
-    await page.goto('http://localhost:5173/')
+    // the page at baseURL
+    // (see exact URL at playwright.config.js)
+    await page.goto('/')
   })
 
   test('front page can be opened', async ({ page }) => {  
@@ -29,14 +31,8 @@ describe('Note app', () => {
   })
 
   test('user can log in', async ({ page }) => {
-    // user toggles LoginForm using login button
-    await page.getByRole('button', {name: 'log in'}).click()
-
-    // form fields are found by their testid
-    // and are filled with valid user credentials by user
-    await page.getByTestId('username').fill('mluukkai')
-    await page.getByTestId('password').fill('$aLa1Nen')
-    await page.getByRole('button', {name: 'log in'}).click()
+    // we now use the helper function loginWith to ensure non-repetitive code
+    loginWith(page, 'mluukkai', '$aLa1Nen')
 
     // successful login expected
     await expect(page.getByText('Matti Luukkainen logged in')).toBeVisible()
@@ -47,21 +43,15 @@ describe('Note app', () => {
   // tests are reset
   describe('when logged in', () => {
     beforeEach(async ({ page }) => {
-      // all tests in this block are testing
+      // all tests in this block are testing a scenario
       // when user mluukkai is logged in
-      await page.getByRole('button', {name: 'log in'}).click()
-      await page.getByTestId('username').fill('mluukkai')
-      await page.getByTestId('password').fill('$aLa1Nen')
-      await page.getByRole('button', {name: 'log in'}).click()
+      // we use helper function here too
+      loginWith(page, 'mluukkai', '$aLa1Nen')
     })
     
     test('a new note can be created', async ({ page }) => {
-      // user clickes new note button which toggles NoteForm
-      await page.getByRole('button', {name: 'new note'}).click()
-
-      // the newnote field is filled with a note and save button is clicked
-      await page.getByTestId('newnote').fill('a note created by playwright')
-      await page.getByRole('button', {name: 'save'}).click()
+      // we now use the helper function createNote to ensure non-repetitive code
+      createNote(page, 'a note created by playwright')
 
       // the saved note is then expected to be among the listed notes
       await expect(page.getByText('a note created by playwright')).toBeVisible()
@@ -69,9 +59,8 @@ describe('Note app', () => {
     
     describe('and a note exists', () => {
       beforeEach(async ({ page }) => {
-        await page.getByRole('button', { name: 'new note' }).click()
-        await page.getByTestId('newnote').fill('another note by playwright')
-        await page.getByRole('button', { name: 'save' }).click()
+        // we use helper function here too
+        createNote(page, 'another note by playwright')
       })
 
       test('importance can be changed', async ({ page }) => {
