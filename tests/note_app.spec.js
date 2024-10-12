@@ -57,20 +57,30 @@ describe('Note app', () => {
       await expect(page.getByText('a note created by playwright')).toBeVisible()
     })
     
-    describe('and a note exists', () => {
+    describe('and several notes exist', () => {
       beforeEach(async ({ page }) => {
         // we use helper function here too
-        createNote(page, 'another note by playwright')
+        createNote(page, 'first note', true)
+        createNote(page, 'second note', true)
+        createNote(page, 'third note', true)
       })
 
-      test('importance can be changed', async ({ page }) => {
-        // button of the single existing note is important by default so
-        // the visible button to be clicked is labeled 'make not important'
-        // user clicks the button
-        await page.getByRole('button', { name: 'make not important' }).click()
+      test.only('one of those can be made nonimportant', async ({ page }) => {
+        // the button of both existing notes is important
+        // find + store span element which contains second note element
+        const otherNoteText = await page.getByText('second note')
 
-        // then it is expected that an element labeled 'make important' is visible
-        await expect(await page.getByText('make important')).toBeVisible()
+        // find + store actual second note element using locator function
+        // .locator('..') finds the parent of an element
+        const otherNoteElement = await otherNoteText.locator('..')
+
+        // find button associated with second note
+        // which is labeled 'make not important'
+        // and click it
+        await otherNoteElement.getByRole('button', { name: 'make not imoortant' }).click()
+
+        // verify that the button's text has changed to 'make important'
+        await expect(otherNoteElement.getByText('make important')).toBeVisible()
       })
     })
   })
