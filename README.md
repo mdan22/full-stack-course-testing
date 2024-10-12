@@ -1,26 +1,28 @@
 # full-stack-course-testing
 
-This is a Repo for testing, coding, debugging stuff related to the full stack course that I'm doing rn.
+This is a Repo I use to test, code, debug along the material of the full stack course.
 
 The latest Version of the Note App from this repo is live at [mdan22-fsct.onrender.com](https://mdan22-fsct.onrender.com/) !
 
 ## Related Links
 
-- find my main repo for part 1 + 2 submissions here:       https://github.com/mdan22/full-stack-course
+- [repo for part 1 + 2 submissions](https://github.com/mdan22/full-stack-course)
   
-- find my repo for part 3 submissions here:    https://github.com/mdan22/full-stack-course-part3
+- [repo for part 3 submissions](https://github.com/mdan22/full-stack-course-part3)
 
-- find my repo for part 4 submissions here:    https://github.com/mdan22/full-stack-course-part4
+- [repo for part 4 submissions](https://github.com/mdan22/full-stack-course-part4)
 
-- find the full-stack-course here:              https://fullstackopen.com/en/
+- [repo for part 5 submissions](https://github.com/mdan22/full-stack-course-part5)
+
+- [repo for e2e testing (part 5)](https://github.com/mdan22/full-stack-course-e2e)
+
+- [the full-stack-course](https://fullstackopen.com/en/)
 
 ## Technologies
-<ul>
-    <li>JavaScript</li>
-    <li>Vite</li>
-    <li>React</li>
-    <li>Node.js</li>
-</ul>
+- Node.js
+- JavaScript
+- Vite + React
+- Playwright
 
 ## A true full stack developer's oath
 Full stack development is extremely hard, that is why I will use all the possible means to make it easier
@@ -75,7 +77,7 @@ Full stack development is extremely hard, that is why I will use all the possibl
 
 #### Initializing tests
 
-- use `npm init playwright@latest` to install Playwright
+- run `npm init playwright@latest` to install Playwright
 - to run an E2E test...
   - frontend and backend need to run in the background
   - run `npm test` to run all tests
@@ -92,3 +94,19 @@ Full stack development is extremely hard, that is why I will use all the possibl
   // ...
 }
 ```
+
+#### Test development and debugging
+
+- run `npm test -- -g'specific test' --debug` to run a specific test in debug mode
+- while in debug mode, we can step through the test command by command using the arrow-dot button
+- or we can write `await page.pause()` anywhere in the code to create a sort of breakpoint (green-arrrow button runs the test until next breakpoint)
+- run 'npm run test -- -ui' to run test with the UI 
+- run `npm run test -- -trace on` to save a trace of the test
+- run `run test:report` to view the trace afterwards
+- press the double circle button in UI mode or Trace Viewer and hover over a UI element so Playwright displays the element locator
+- run `npx playwright codegen http://localhost:5173/` to record a test through the UI which makes it possible to simply copy the locators and actions to the tests
+- Playwright can also be used via the [VS Code plugin](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright)
+- most important sections of [Playwright's documentation](https://playwright.dev/docs/intro):
+  - section about [locators](https://playwright.dev/docs/locators)
+  - section about [actions](https://playwright.dev/docs/input)
+  - section about [assertions](https://playwright.dev/docs/test-assertions)
