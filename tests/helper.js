@@ -6,6 +6,8 @@ const loginWith = async (page, username, password)  => {
   // and are filled with valid user credentials by user
   await page.getByTestId('username').fill(username)
   await page.getByTestId('password').fill(password)
+
+  // form is submitted
   await page.getByRole('button', {name: 'log in'}).click()
 }
 

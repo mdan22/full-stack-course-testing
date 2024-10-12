@@ -15,9 +15,8 @@ describe('Note app', () => {
       }
     })
 
-    // all tests in this block are testing
-    // the page at baseURL
-    // (see exact URL at playwright.config.js)
+    // all tests in this block are testing the page
+    // at http://localhost:5173 which is defined in config.js
     await page.goto('/')
   })
 
