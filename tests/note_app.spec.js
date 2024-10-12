@@ -60,15 +60,29 @@ describe('Note app', () => {
     describe('and several notes exist', () => {
       beforeEach(async ({ page }) => {
         // we use helper function here too
-        createNote(page, 'first note', true)
-        createNote(page, 'second note', true)
-        createNote(page, 'third note', true)
+        createNote(page, 'first note')
+
+        // might need to adjust all 3 timeouts
+        // depending on the machine
+        await page.waitForTimeout(450)
+
+        createNote(page, 'second note')
+        await page.waitForTimeout(450)
+
+        createNote(page, 'third note')
+        await page.waitForTimeout(450)
       })
 
-      test.only('one of those can be made nonimportant', async ({ page }) => {
+      test('importance can be changed', async ({ page }) => {
+        // this command pauses the test execution at this point
+        // when running npm test -- -g'importance can be changed' --debug
+        // await page.pause()
+
         // the button of both existing notes is important
         // find + store span element which contains second note element
         const otherNoteText = await page.getByText('second note')
+
+        await expect(otherNoteText).toBeVisible()
 
         // find + store actual second note element using locator function
         // .locator('..') finds the parent of an element
@@ -76,8 +90,11 @@ describe('Note app', () => {
 
         // find button associated with second note
         // which is labeled 'make not important'
+        const button = await otherNoteElement.getByRole('button', { name: 'make not important' })
+        await expect(button).toBeVisible()
+
         // and click it
-        await otherNoteElement.getByRole('button', { name: 'make not imoortant' }).click()
+        button.click()
 
         // verify that the button's text has changed to 'make important'
         await expect(otherNoteElement.getByText('make important')).toBeVisible()

@@ -16,6 +16,10 @@ const createNote = async (page, content) => {
   // the newnote field is filled with a note and save button is clicked
   await page.getByTestId('newnote').fill(content)
   await page.getByRole('button', {name: 'save'}).click()
+
+  // slow down insert operations by using waitFor
+  // so the notes are not inserted simultaneously
+  await page.getByText(content).waitFor()
 }
 
 export {
