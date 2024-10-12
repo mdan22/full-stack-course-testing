@@ -72,3 +72,23 @@ Full stack development is extremely hard, that is why I will use all the possibl
 - Playwright is roughly on a par with Cypress in terms of ease of use
 - Playwright's tests are executed in the Node process, which is connected to the browser via programming interfaces
 - One advantage of Playwright is its browser support: it supports Chrome, Firefox and Webkit-based browsers like Safari
+
+#### Initializing tests
+
+- use `npm init playwright@latest` to install Playwright
+- to run an E2E test...
+  - frontend and backend need to run in the background
+  - run `npm test` to run all tests
+  - run `npm run test:report` to show the test report
+- define the scripts in the package.json of the playwright project like this:
+
+```javascript
+{
+  // ...
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright show-report"
+  },
+  // ...
+}
+```
