@@ -34,7 +34,7 @@ test('Modified #1: <NoteForm /> updates parent state and calls onSubmit', async 
 
   render(<NoteForm createNote={createNote} />)
 
-  // use getByAllRole() to access all input fields
+  // use getAllByRole() to access all input fields
   const inputs = screen.getAllByRole('textbox')
   // use getByText to find button
   const sendButton = screen.getByText('save')
